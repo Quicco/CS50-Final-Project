@@ -1,8 +1,9 @@
-import sqlite3, argon2
+import sqlite3
+from argon2 import PasswordHasher
 
 con = sqlite3.connect("flaskr/database.db")
 cur = con.cursor()
-ph = argon2.PasswordHasher()
+ph = PasswordHasher()
 
 
 def initialize_db():
