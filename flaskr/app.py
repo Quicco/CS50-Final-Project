@@ -32,8 +32,10 @@ def login():
             results = cur.fetchone()
 
             if results and ph.verify(results["password"], pw):
+                # TODO: CREATE HOMEPAGE
                 return "USER!! :)"
             else:
+                # TODO: CREATE ERROR USER INPUTS
                 return "NO USER!! >:("
         except sqlite3.Error as e:
             return f"Database error: {e}"
