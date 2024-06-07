@@ -1,5 +1,6 @@
 import sqlite3
 from argon2 import PasswordHasher
+from faker import Faker
 
 
 db_path = "database.db"
@@ -25,6 +26,8 @@ def create_tables():
 
 
 def populate_db():
+    fake = Faker("pt_PT")
+
     # Populate teacher table
     DEV_NAME = "Tiago"
     DEV_MAIL = "admin@dev.com"
@@ -62,6 +65,25 @@ def populate_db():
         )
     con.commit()
     # Populate student table
+    students = []
+    for _ in range(48):
+        students.append(
+            {
+                "name": fake.name(),
+                "email": fake.email(),
+                "phone": fake.phone_number,
+                "location": "Lisbon",
+                "course": "PowerUp",
+            }
+        )
+
+    for student in students:
+        values = tuple(student.values())
+        cur.execute(
+            "INSERT INTO student (name, email, phone, location, course) VALUES (?, ?, ?, ? , ?)",
+            values,
+        )
+    con.commit()
 
 
 initialize_db()
