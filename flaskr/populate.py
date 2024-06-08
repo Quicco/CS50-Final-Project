@@ -16,9 +16,10 @@ def initialize_db():
 
 def create_tables():
     queries = [
-        "CREATE TABLE IF NOT EXISTS teacher(teacher_id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT);",
+        "CREATE TABLE IF NOT EXISTS teacher (teacher_id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT, class_id INTEGER, FOREIGN KEY (class_id) REFERENCES class(class_id));",
         "CREATE TABLE IF NOT EXISTS class (class_id INTEGER PRIMARY KEY, course TEXT, class_type TEXT, time_slot TEXT, location TEXT, year INTEGER);",
-        "CREATE TABLE IF NOT EXISTS student (student_id INTEGER PRIMARY KEY, name TEXT, email TEXT, phone TEXT, location TEXT, course TEXT);",
+        "CREATE TABLE IF NOT EXISTS student (student_id INTEGER PRIMARY KEY, name TEXT, email TEXT, phone TEXT, location TEXT, course TEXT, class_type TEXT, teacher_id INTEGER, FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
+        "CREATE TABLE IF NOT EXISTS class_teacher (class_id INTEGER, teacher_id INTEGER, PRIMARY KEY (class_id, teacher_id), FOREIGN KEY (class_id) REFERENCES class(class_id), FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
     ]
     for query in queries:
         cur.execute(query)
@@ -32,13 +33,10 @@ def populate_db():
     DEV_NAME = "Tiago"
     DEV_MAIL = "admin@dev.com"
     DEV_PW = ph.hash("123")
+    DEV_CLASS = 1
     cur.execute(
-        "INSERT INTO teacher (name, email, password) VALUES (?, ?, ?)",
-        (
-            DEV_NAME,
-            DEV_MAIL,
-            DEV_PW,
-        ),
+        "INSERT INTO teacher (name, email, password, class_id) VALUES (?, ?, ?, ?)",
+        (DEV_NAME, DEV_MAIL, DEV_PW, DEV_CLASS),
     )
     # Populate class table
     classes = [
@@ -71,16 +69,17 @@ def populate_db():
             {
                 "name": fake.name(),
                 "email": fake.email(),
-                "phone": fake.phone_number,
+                "phone": fake.phone_number(),
                 "location": "Lisbon",
-                "course": "PowerUp",
+                "course": "Junior Fullstack Developer",
+                "class_type": "PowerUp",
             }
         )
 
     for student in students:
         values = tuple(student.values())
         cur.execute(
-            "INSERT INTO student (name, email, phone, location, course) VALUES (?, ?, ?, ? , ?)",
+            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
             values,
         )
     con.commit()
