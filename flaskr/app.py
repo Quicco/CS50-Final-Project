@@ -33,7 +33,6 @@ def login():
             results = cur.fetchone()
 
             if results and ph.verify(results["password"], pw):
-                # TODO: CREATE HOMEPAGE
                 cur.execute("SELECT * FROM class")
                 results = cur.fetchall()
                 classes = [dict(row) for row in results]
@@ -51,7 +50,7 @@ def login():
 @app.route("/select", methods=["GET", "POST"])
 def select():
     if request.method == "POST":
-        course = request.form["course"]
+        class_id = request.form["class_id"]
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
@@ -59,8 +58,8 @@ def select():
         cur = con.cursor()
 
         try:
-            query = """SELECT * FROM student WHERE course = (?);"""
-            cur.execute(query, (course,))
+            query = """SELECT * FROM student WHERE class_id = (?);"""
+            cur.execute(query, (class_id,))
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template("select.html", students=students)

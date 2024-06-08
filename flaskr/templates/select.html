@@ -2,14 +2,46 @@
 
 {% block body %}
 <header></header>
-
-<h1>Ongoing classes</h1>
+<h1>Students List</h1>
 <ul>
-  {% for student in students %}
   <li>
-    {{ student['name'] }}
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Location</th>
+          <th>Course</th>
+          <th>Class Type</th>
+          </tr>
+          </thead>
+          <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student['name'] }}</td>
+          <td>{{ student['email'] }}</td>
+          <td>{{ student['phone'] }}</td>
+          <td>{{ student['location'] }}</td>
+          <td>{{ student['course'] }}</td>
+          <td>{{ student['class_type'] }}</td>
+          <td>
+            <form action="/edit" method="post">
+            <input name="student_id" type="hidden" value="{{ student['student_id'] }}">
+            <button type="submit">Edit</button>
+            </form>
+          </td>
+          <td>
+            <form action="/delete" method="post">
+            <input name="student_id" type="hidden" value="{{ student['student_id'] }}">
+            <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </li>
-  {% endfor %}
 </ul>
 
 

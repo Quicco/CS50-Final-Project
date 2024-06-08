@@ -1,4 +1,5 @@
 import sqlite3
+import random
 from argon2 import PasswordHasher
 from faker import Faker
 
@@ -16,9 +17,25 @@ def initialize_db():
 
 def create_tables():
     queries = [
-        "CREATE TABLE IF NOT EXISTS teacher (teacher_id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT, class_id INTEGER, FOREIGN KEY (class_id) REFERENCES class(class_id));",
+        # teacher table
+        "CREATE TABLE IF NOT EXISTS teacher (teacher_id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, password TEXT, class_id INTEGER, FOREIGN KEY (class_id) REFERENCES class(class_id));",
+        # class table
         "CREATE TABLE IF NOT EXISTS class (class_id INTEGER PRIMARY KEY, course TEXT, class_type TEXT, time_slot TEXT, location TEXT, year INTEGER);",
-        "CREATE TABLE IF NOT EXISTS student (student_id INTEGER PRIMARY KEY, name TEXT, email TEXT, phone TEXT, location TEXT, course TEXT, class_type TEXT, teacher_id INTEGER, FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
+        # student table
+        """CREATE TABLE IF NOT EXISTS student (
+        student_id INTEGER PRIMARY KEY, 
+        name TEXT, 
+        email TEXT UNIQUE, 
+        phone TEXT, 
+        location TEXT, 
+        course TEXT, 
+        class_type TEXT, 
+        teacher_id INTEGER,
+        class_id INTEGER,
+        FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
+        FOREIGN KEY (class_id) REFERENCES class(class_id)
+        );""",
+        # class_teacher junction table
         "CREATE TABLE IF NOT EXISTS class_teacher (class_id INTEGER, teacher_id INTEGER, PRIMARY KEY (class_id, teacher_id), FOREIGN KEY (class_id) REFERENCES class(class_id), FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
     ]
     for query in queries:
@@ -64,7 +81,12 @@ def populate_db():
     con.commit()
     # Populate student table
     students = []
-    for _ in range(48):
+    # Create a list with 24 ones and 24 twos
+    class_ids = [1] * 24 + [2] * 24
+    # Shuffle the list to randomize the order
+    random.shuffle(class_ids)
+
+    for class_id in class_ids:
         students.append(
             {
                 "name": fake.name(),
@@ -73,13 +95,14 @@ def populate_db():
                 "location": "Lisbon",
                 "course": "Junior Fullstack Developer",
                 "class_type": "PowerUp",
+                "class_id": class_id,
             }
         )
 
     for student in students:
         values = tuple(student.values())
         cur.execute(
-            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
+            "INSERT INTO student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? , ?, ?, ?)",
             values,
         )
     con.commit()
