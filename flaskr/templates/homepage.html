@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<header></header>
+
+<h1>Ongoing classes</h1>
+<ul>
+  {% for class in classes %}
+  <li>
+    <table>
+      <thead>
+        <tr>
+          <th>Course</th>
+          <th>Class Type</th>
+          <th>Time Slot</th>
+          <th>Location</th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ class['course'] }}</td>
+          <td>{{ class['class_type'] }}</td>
+          <td>{{ class['time_slot'] }}</td>
+          <td>{{ class['location'] }}</td>
+          <td>{{ class['year'] }}</td>
+          <td>
+            <form action="/select" method="post">
+            <input name="course" type="hidden" value="{{ class['class_type'] }}">
+            <button type="submit">Select</button>
+            </form></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

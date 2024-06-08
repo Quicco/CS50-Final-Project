@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<header></header>
+
+<h1>Ongoing classes</h1>
+<ul>
+  {% for student in students %}
+  <li>
+    {{ student['name'] }}
+  </li>
+  {% endfor %}
+</ul>
+
+
+
+{% endblock %}
