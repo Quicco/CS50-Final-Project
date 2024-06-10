@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from argon2 import PasswordHasher
 import sqlite3
 
@@ -10,6 +10,9 @@ ph = PasswordHasher()
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+# --- Database related functions---
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -48,10 +51,10 @@ def login():
 
 
 # ---Class Related Routes---
-@app.route("/select", methods=["GET", "POST"])
+@app.route("/class_view", methods=["GET", "POST"])
 def select():
     if request.method == "POST":
-        class_id = request.form["class_id"]
+        class_id = request.form.get("class_id")
 
         if not class_id:
             # TODO Error message
@@ -67,7 +70,9 @@ def select():
             cur.execute(query, (class_id,))
             results = cur.fetchall()
             students = [dict(row) for row in results]
-            return render_template("select.html", students=students)
+            return render_template(
+                "classview.html", students=students, class_id=class_id
+            )
 
         except sqlite3.Error as e:
             return f"Database error: {e}"
@@ -94,7 +99,10 @@ def editstudent():
 
         try:
             query = "SELECT * FROM student WHERE student_id = (?)"
-            cur.execute(query, (student_id,))
+            cur.execute(
+                query,
+                (student_id,),
+            )
             student = cur.fetchone()
 
             locations = ["Lisbon", "Sintra", "Porto"]
@@ -118,6 +126,7 @@ def editstudent():
 def confirm_edit():
     if request.method == "POST":
         student_id = request.form.get("student_id")
+        class_id = request.form.get("class_id")
         upd_name = request.form.get("name")
         upd_email = request.form.get("email")
         upd_phone = request.form.get("phone")
@@ -141,8 +150,34 @@ def confirm_edit():
             ),
         )
         con.commit()
-        cur.execute("SELECT * from student")
+        query = """SELECT * FROM student WHERE class_id = (?);"""
+        cur.execute(query, (class_id,))
+
         results = cur.fetchall()
         students = [dict(row) for row in results]
 
-        return render_template("select.html", students=students)
+        return render_template("classview.html", students=students)
+
+
+@app.route("/delete_student", methods=["GET", "POST"])
+def delete_student():
+    if request.method == "POST":
+        student_id = request.form.get("student_id")
+        class_id = request.form.get("class_id")
+
+        if student_id:
+            try:
+                # Return dicts instead of tuples
+                con = sqlite3.connect(db_path)
+                con.row_factory = sqlite3.Row
+                cur = con.cursor()
+
+                cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
+                con.commit()
+
+                cur.execute("SELECT * FROM student WHERE class_id = (?)", (class_id,))
+                results = cur.fetchall()
+                students = [dict(row) for row in results]
+                return render_template("classview.html", students=students)
+            finally:
+                con.close()

@@ -34,6 +34,7 @@
           <td>
             <form action="/delete_student" method="post">
             <input name="student_id" type="hidden" value="{{ student['student_id'] }}">
+            <input name="class_id" type="hidden" value="{{ class_id }}">
             <button type="submit">Delete</button>
             </form>
           </td>
