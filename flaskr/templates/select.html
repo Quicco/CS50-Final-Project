@@ -26,13 +26,13 @@
           <td>{{ student['course'] }}</td>
           <td>{{ student['class_type'] }}</td>
           <td>
-            <form action="/editstudent" method="post">
+            <form action="/edit_student" method="post">
             <input name="student_id" type="hidden" value="{{ student['student_id'] }}">
             <button type="submit">Edit</button>
             </form>
           </td>
           <td>
-            <form action="/delete" method="post">
+            <form action="/delete_student" method="post">
             <input name="student_id" type="hidden" value="{{ student['student_id'] }}">
             <button type="submit">Delete</button>
             </form>

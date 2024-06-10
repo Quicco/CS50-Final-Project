@@ -4,13 +4,14 @@
 <header></header>
 <h1>Edit Student Info</h1>
 
-<form action="/confirm_edit">
+<form action="/confirm_edit" method="post">
+  <input name="student_id" type="hidden" value="{{ student['student_id'] }}"> 
   <label for="name">Name</label>
-  <input id="name" type="text" placeholder="{{ student['name'] }}">
+  <input id="name" name="name" type="text" value="{{ student['name'] }}">
   <label for="email">Email</label>
-  <input id="email" type="text" placeholder="{{ student['email'] }}">
+  <input id="email" name="email" type="text" value="{{ student['email'] }}">
   <label for="phone">Phone</label>
-  <input id="phone" type="text" placeholder="{{ student['phone'] }}">
+  <input id="phone" name="phone" type="text" value="{{ student['phone'] }}">
   <label for="location">Location</label>
   <select name="location" id="location">
     {% for location in locations %}
@@ -18,7 +19,7 @@
     {% endfor %}
   </select>
   <label for="class-type">Class Type</label>
-  <select name="class-type" id="class-type">
+  <select name="class_type" id="class-type">
     {% for type in class_types %}
     <option value="{{ type }}">{{ type }}</option>
     {% endfor %}
