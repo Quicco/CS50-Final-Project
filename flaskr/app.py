@@ -96,7 +96,16 @@ def editstudent():
             query = "SELECT * FROM student WHERE student_id = (?)"
             cur.execute(query, (student_id,))
             student = cur.fetchone()
-            return render_template("editstudent.html", student=student)
+
+            locations = ["Lisbon", "Sintra", "Porto"]
+            class_types = ["PowerUp", "Bootcamp"]
+
+            return render_template(
+                "editstudent.html",
+                student=student,
+                locations=locations,
+                class_types=class_types,
+            )
 
         except sqlite3.Error as e:
             return f"Database error: {e}"
