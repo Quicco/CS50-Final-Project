@@ -47,10 +47,15 @@ def login():
     return render_template("index.html")
 
 
+# Class Related Routes
 @app.route("/select", methods=["GET", "POST"])
 def select():
     if request.method == "POST":
         class_id = request.form["class_id"]
+
+        if not class_id:
+            # TODO Error message
+            return
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
@@ -69,4 +74,32 @@ def select():
         finally:
             con.close()
 
-    return render_template("index.html")
+    return
+
+
+# Student Related Routes
+@app.route("/editstudent", methods=["GET", "POST"])
+def editstudent():
+    if request.method == "POST":
+        student_id = request.form.get("student_id")
+
+        if not student_id:
+            error = "Sorry, an error has occurred."
+            return render_template("select.html", error=error)
+
+        # Return dicts instead of tuples
+        con = sqlite3.connect(db_path)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+
+        try:
+            query = "SELECT * FROM student WHERE student_id = (?)"
+            cur.execute(query, (student_id,))
+            student = cur.fetchone()
+            return render_template("editstudent.html", student=student)
+
+        except sqlite3.Error as e:
+            return f"Database error: {e}"
+        finally:
+            con.close()
+    return render_template("")
