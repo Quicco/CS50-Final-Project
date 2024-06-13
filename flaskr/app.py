@@ -83,6 +83,57 @@ def class_view():
 
 
 # ---Student Related Routes---
+@app.route("/add_student", methods=["GET", "POST"])
+def add_student():
+    if request.method == "POST":
+
+        class_id = request.form.get("class_id")
+        locations = ["Lisbon", "Sintra", "Porto"]
+        class_types = ["PowerUp", "Bootcamp"]
+
+        return render_template(
+            "add-student.html",
+            class_id=class_id,
+            class_types=class_types,
+            locations=locations,
+        )
+
+
+@app.route("/confirm_add", methods=["GET", "POST"])
+def confirm_add():
+    if request.method == "POST":
+        try:
+            class_id = request.form.get("class_id")
+            name = request.form.get("name")
+            email = request.form.get("email")
+            phone = request.form.get("phone")
+            location = request.form.get("location")
+            course = "Junior Fullstack Developer"  # TODO Update this part so it's not hardcoded
+            class_type = request.form.get("class_type")
+
+            # Return dicts instead of tuples
+            con = sqlite3.connect(db_path)
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+
+            cur.execute(
+                """INSERT into student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? ,?, ?, ? )""",
+                (name, email, phone, location, course, class_type, class_id),
+            )
+            con.commit()
+
+            query = """SELECT * FROM student WHERE class_id = (?);"""
+            cur.execute(query, (class_id,))
+
+            results = cur.fetchall()
+            students = [dict(row) for row in results]
+            return render_template(
+                "classview.html", students=students, class_id=class_id
+            )
+        finally:
+            con.close()
+
+
 @app.route("/edit_student", methods=["GET", "POST"])
 def edit_student():
     if request.method == "POST":
@@ -125,6 +176,7 @@ def edit_student():
 @app.route("/confirm_edit", methods=["GET", "POST"])
 def confirm_edit():
     if request.method == "POST":
+
         student_id = request.form.get("student_id")
         class_id = request.form.get("class_id")
         upd_name = request.form.get("name")
