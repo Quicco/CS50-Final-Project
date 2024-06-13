@@ -4,7 +4,6 @@
 <header></header>
 <h1>Edit Student Info</h1>
 
-class id: {{ student['class_id']}}
 <form action="/confirm_edit" method="post">
   <input name="class_id" type="hidden" value="{{ student['class_id'] }}">
   <input name="student_id" type="hidden" value="{{ student['student_id'] }}"> 

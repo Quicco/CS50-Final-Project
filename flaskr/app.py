@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, jsonify
 from argon2 import PasswordHasher
 import sqlite3
 
 app = Flask(__name__)
-db_path = "flaskr/database.db"
+db_path = "database.db"
 ph = PasswordHasher()
 
 
@@ -52,7 +52,7 @@ def login():
 
 # ---Class Related Routes---
 @app.route("/class_view", methods=["GET", "POST"])
-def select():
+def class_view():
     if request.method == "POST":
         class_id = request.form.get("class_id")
 
@@ -84,7 +84,7 @@ def select():
 
 # ---Student Related Routes---
 @app.route("/edit_student", methods=["GET", "POST"])
-def editstudent():
+def edit_student():
     if request.method == "POST":
         student_id = request.form.get("student_id")
 
@@ -161,6 +161,20 @@ def confirm_edit():
 
 @app.route("/delete_student", methods=["GET", "POST"])
 def delete_student():
+    # student_id = request.form.get("student_id")
+    # class_id = request.form.get("class_id")
+
+    # if student_id:
+    #     try:
+    #         con = sqlite3.connect(db_path)
+    #         cur = con.cursor()
+
+    #         cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
+    #         con.commit()
+
+    #         return render_template("classview.html")
+    #     finally:
+    #         con.close()
     if request.method == "POST":
         student_id = request.form.get("student_id")
         class_id = request.form.get("class_id")
