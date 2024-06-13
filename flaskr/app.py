@@ -161,20 +161,6 @@ def confirm_edit():
 
 @app.route("/delete_student", methods=["GET", "POST"])
 def delete_student():
-    # student_id = request.form.get("student_id")
-    # class_id = request.form.get("class_id")
-
-    # if student_id:
-    #     try:
-    #         con = sqlite3.connect(db_path)
-    #         cur = con.cursor()
-
-    #         cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
-    #         con.commit()
-
-    #         return render_template("classview.html")
-    #     finally:
-    #         con.close()
     if request.method == "POST":
         student_id = request.form.get("student_id")
         class_id = request.form.get("class_id")
@@ -192,6 +178,8 @@ def delete_student():
                 cur.execute("SELECT * FROM student WHERE class_id = (?)", (class_id,))
                 results = cur.fetchall()
                 students = [dict(row) for row in results]
-                return render_template("classview.html", students=students)
+                return render_template(
+                    "classview.html", students=students, class_id=class_id
+                )
             finally:
                 con.close()
