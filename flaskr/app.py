@@ -12,9 +12,6 @@ def index():
     return render_template("login.html")
 
 
-# --- Database related functions---
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -39,7 +36,7 @@ def login():
                 cur.execute("SELECT * FROM class")
                 results = cur.fetchall()
                 classes = [dict(row) for row in results]
-                return render_template("homepage.html", classes=classes)
+                return render_template("course_class/homepage.html", classes=classes)
             else:
                 # TODO: CREATE ERROR USER INPUTS
                 return "NO USER!! >:("
@@ -47,7 +44,7 @@ def login():
             return f"Database error: {e}"
         finally:
             con.close()
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 # ---Class Related Routes---
@@ -71,7 +68,7 @@ def class_view():
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template(
-                "classview.html", students=students, class_id=class_id
+                "course_class/classview.html", students=students, class_id=class_id
             )
 
         except sqlite3.Error as e:
@@ -92,7 +89,7 @@ def add_student():
         class_types = ["PowerUp", "Bootcamp"]
 
         return render_template(
-            "add-student.html",
+            "student/add-student.html",
             class_id=class_id,
             class_types=class_types,
             locations=locations,
@@ -128,7 +125,7 @@ def confirm_add():
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template(
-                "classview.html", students=students, class_id=class_id
+                "course_class/classview.html", students=students, class_id=class_id
             )
         finally:
             con.close()
@@ -141,7 +138,7 @@ def edit_student():
 
         if not student_id:
             error = "Sorry, an error has occurred."
-            return render_template("select.html", error=error)
+            return render_template("course_class/classview.html", error=error)
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
@@ -160,7 +157,7 @@ def edit_student():
             class_types = ["PowerUp", "Bootcamp"]
 
             return render_template(
-                "editstudent.html",
+                "student/edit-student.html",
                 student=student,
                 locations=locations,
                 class_types=class_types,
@@ -208,7 +205,7 @@ def confirm_edit():
         results = cur.fetchall()
         students = [dict(row) for row in results]
 
-        return render_template("classview.html", students=students)
+        return render_template("course_class/classview.html", students=students)
 
 
 @app.route("/delete_student", methods=["GET", "POST"])
@@ -231,7 +228,7 @@ def delete_student():
                 results = cur.fetchall()
                 students = [dict(row) for row in results]
                 return render_template(
-                    "classview.html", students=students, class_id=class_id
+                    "course_class/classview.html", students=students, class_id=class_id
                 )
             finally:
                 con.close()
