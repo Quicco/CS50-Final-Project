@@ -9,7 +9,7 @@ ph = PasswordHasher()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 # --- Database related functions---
@@ -23,7 +23,7 @@ def login():
 
         if not email or not pw:
             error = "Please fill in your email and password."
-            return render_template("index.html", error=error)
+            return render_template("login.html", error=error)
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
