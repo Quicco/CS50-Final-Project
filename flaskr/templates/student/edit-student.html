@@ -1,6 +1,12 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "layout.html" %} 
+
+{% block body %}
 <header></header>
 <h1>Edit Student Info</h1>
+
+{% block return %}
+<button onclick="goBack()">&#8592</button>
+{% endblock %}
 
 <form action="/confirm_edit" method="post">
   <input name="class_id" type="hidden" value="{{ student['class_id'] }}" />

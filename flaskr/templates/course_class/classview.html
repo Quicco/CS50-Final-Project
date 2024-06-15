@@ -1,6 +1,12 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "layout.html" %} 
+
+{% block body %}
 <header></header>
 <h1>Students List</h1>
+
+{% block return %}
+<button onclick="goBack()">&#8592</button>
+{% endblock %}
 
 <ul>
   {% if students|length < 24 %}
@@ -9,6 +15,8 @@
     <button>Add</button>
   </form>
   {% endif %}
+
+  {% if students %}
   <li>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
@@ -41,7 +49,7 @@
             </form>
           </td>
           <td>
-            <form action="/delete_student" method="post">
+            <form action="/delete_student" method="post" onsubmit="return confirmDeletion()">
               <input
                 name="student_id"
                 type="hidden"
@@ -53,8 +61,11 @@
           </td>
         </tr>
         {% endfor %}
+        {% else %}
+        <h5>There are currently no students in this class.</h5>
       </tbody>
     </table>
   </li>
+  {% endif %}
 </ul>
 {% endblock %}

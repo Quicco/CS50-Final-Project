@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, jsonify
+from flask import Flask, render_template, url_for, request, session, redirect, jsonify
 from argon2 import PasswordHasher
 import sqlite3
 
@@ -9,7 +9,7 @@ ph = PasswordHasher()
 
 @app.route("/")
 def index():
-    return render_template("login.html")
+    return render_template("login-form.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -44,7 +44,6 @@ def login():
             return f"Database error: {e}"
         finally:
             con.close()
-    return render_template("login.html")
 
 
 # ---Class Related Routes---
@@ -138,7 +137,7 @@ def edit_student():
 
         if not student_id:
             error = "Sorry, an error has occurred."
-            return render_template("course_class/classview.html", error=error)
+            return render_template("course_class/homepage", error=error)
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
@@ -173,46 +172,42 @@ def edit_student():
 @app.route("/confirm_edit", methods=["GET", "POST"])
 def confirm_edit():
     if request.method == "POST":
+        try:
+            student_id = request.form.get("student_id")
+            upd_name = request.form.get("name")
+            upd_email = request.form.get("email")
+            upd_phone = request.form.get("phone")
+            upd_location = request.form.get("location")
+            upd_class_type = request.form.get("class_type")
 
-        student_id = request.form.get("student_id")
-        class_id = request.form.get("class_id")
-        upd_name = request.form.get("name")
-        upd_email = request.form.get("email")
-        upd_phone = request.form.get("phone")
-        upd_location = request.form.get("location")
-        upd_class_type = request.form.get("class_type")
+            # Return dicts instead of tuples
+            con = sqlite3.connect(db_path)
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
 
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
+            cur.execute(
+                """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
+                (
+                    upd_name,
+                    upd_email,
+                    upd_phone,
+                    upd_location,
+                    upd_class_type,
+                    student_id,
+                ),
+            )
+            con.commit()
+        finally:
+            con.close()
 
-        cur.execute(
-            """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
-            (
-                upd_name,
-                upd_email,
-                upd_phone,
-                upd_location,
-                upd_class_type,
-                student_id,
-            ),
-        )
-        con.commit()
-        query = """SELECT * FROM student WHERE class_id = (?);"""
-        cur.execute(query, (class_id,))
-
-        results = cur.fetchall()
-        students = [dict(row) for row in results]
-
-        return render_template("course_class/classview.html", students=students)
+        msg = "You have sucsessfully edited a student."
+        return render_template("user_feedback/confirm-edit.html", msg=msg)
 
 
 @app.route("/delete_student", methods=["GET", "POST"])
 def delete_student():
     if request.method == "POST":
         student_id = request.form.get("student_id")
-        class_id = request.form.get("class_id")
 
         if student_id:
             try:
@@ -223,12 +218,8 @@ def delete_student():
 
                 cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
                 con.commit()
-
-                cur.execute("SELECT * FROM student WHERE class_id = (?)", (class_id,))
-                results = cur.fetchall()
-                students = [dict(row) for row in results]
-                return render_template(
-                    "course_class/classview.html", students=students, class_id=class_id
-                )
             finally:
                 con.close()
+
+        msg = "You have sucsessfully deleted a student."
+        return render_template("user_feedback/confirm-delete.html", msg=msg)
