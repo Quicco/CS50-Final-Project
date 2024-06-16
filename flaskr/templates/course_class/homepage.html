@@ -1,9 +1,29 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<h1>Ongoing classes</h1>
 
-<ul>
+{% block header %}
+<header class="container-fluid">
+  <div class="logo-container">
+    <a href="{{ url_for('homepage') }}">
+      <img class="logo" src="{{ url_for('static', filename='img/GVU.svg') }}" alt="Green valley university logo">
+    </a>
+    <h4 class="gvu"><span class="green">Green</span>ValleyUniversity</h4>
+  </div>
+
+  <nav>
+    <form action="/logout">
+      <input type="submit" value="Logout">
+    </form>
+  </nav>
+</header>
+
+{% endblock %}
+<main class="container">
+<h2>Ongoing classes</h2>
+
+{% if classes %}
+<ul class="container">
   <li>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
@@ -35,4 +55,8 @@
     </table>
   </li>
 </ul>
+
+{% endif %}
+<h2>Archived classes</h2>
+</main>
 {% endblock %}

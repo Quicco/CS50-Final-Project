@@ -1,14 +1,20 @@
-{% extends "layout.html" %} 
+{% extends "course_class/homepage.html" %} 
 
 {% block body %}
+
+{% block header %}
+  {{ super() }}
+{% endblock %}
+
+
+<main class="container">
 <h1>Students List</h1>
 
 <!--Go back to the homepage-->
 {% block return %}
 <form action="/homepage" method="post">
-  <input type="submit" value="<--">
+  <input type="submit" value="Go back">
 </form>
-<button onclick="goBack()"></button>
 {% endblock %}
 
 <ul>
@@ -19,7 +25,8 @@
   </form>
   {% endif %}
 
-  {% if students %}
+  {% if students_per_page %}
+
   <li>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
@@ -33,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for student in students %}
+        {% for student in students_per_page %}
         <tr>
           <td>{{ student['name'] }}</td>
           <td>{{ student['email'] }}</td>
@@ -64,6 +71,7 @@
           </td>
         </tr>
         {% endfor %}
+        
         {% else %}
         <h5>There are currently no students in this class.</h5>
       </tbody>
@@ -71,4 +79,14 @@
   </li>
   {% endif %}
 </ul>
+
+{% if page > 1 %}
+  <a href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
+{% endif %}
+  <span>Page {{ page }} of {{ total_pages }}</span>
+{% if page < total_pages %}
+  <a href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
+{% endif %}
+</main>
+
 {% endblock %}

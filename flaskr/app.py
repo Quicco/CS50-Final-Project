@@ -3,6 +3,11 @@ from argon2 import PasswordHasher
 import sqlite3
 
 app = Flask(__name__)
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.secret_key = "THIS_IS_CS_50"
+
 db_path = "database.db"
 ph = PasswordHasher()
 
@@ -16,6 +21,10 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+
+        # Store the form data to the session object
+        session["email"] = request.form.get("email")
+
         email = request.form["email"]
         pw = request.form["password"]
 
@@ -45,6 +54,12 @@ def login():
             con.close()
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
 # --- Class Related Routes ---
 @app.route("/student_list", methods=["GET", "POST"])
 def student_list():
@@ -65,8 +80,21 @@ def student_list():
             cur.execute(query, (class_id,))
             results = cur.fetchall()
             students = [dict(row) for row in results]
+
+            # Pagination
+            page = request.args.get("page", 1, type=int)
+            per_page = 12
+            start = (page - 1) * per_page
+            end = start + per_page
+            total_pages = (len(students) + per_page - 1) // per_page
+            students_per_page = students[start:end]
+
             return render_template(
-                "course_class/student-list.html", students=students, class_id=class_id
+                "course_class/student-list.html",
+                class_id=class_id,
+                students_per_page=students_per_page,
+                total_pages=total_pages,
+                page=page,
             )
 
         except sqlite3.Error as e:
@@ -75,20 +103,56 @@ def student_list():
             con.close()
 
 
+@app.route("/list")
+def list():
+    class_id = request.args.get("class_id")
+    # Return dicts instead of tuples
+    con = sqlite3.connect(db_path)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    try:
+        query = """SELECT * FROM student WHERE class_id = (?);"""
+        cur.execute(query, (class_id,))
+        results = cur.fetchall()
+        students = [dict(row) for row in results]
+
+        # Pagination
+        page = request.args.get("page", 1, type=int)
+        per_page = 12
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(students) + per_page - 1) // per_page
+        students_per_page = students[start:end]
+
+        return render_template(
+            "course_class/student-list.html",
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+        )
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
 # --- Student Related Routes ---
 @app.route("/add_student", methods=["GET", "POST"])
 def add_student():
     if request.method == "POST":
 
         class_id = request.form.get("class_id")
-        locations = ["Lisbon", "Sintra", "Porto"]
-        class_types = ["PowerUp", "Bootcamp"]
+        LOCATIONS = ["Lisbon", "Sintra", "Porto"]
+        CLASS_TYPES = ["PowerUp", "Bootcamp"]
 
         return render_template(
             "student/add-student.html",
             class_id=class_id,
-            class_types=class_types,
-            locations=locations,
+            class_types=CLASS_TYPES,
+            locations=LOCATIONS,
         )
 
 
@@ -170,14 +234,14 @@ def edit_student():
             )
             student = cur.fetchone()
 
-            locations = ["Lisbon", "Sintra", "Porto"]
-            class_types = ["PowerUp", "Bootcamp"]
+            LOCATIONS = ["Lisbon", "Sintra", "Porto"]
+            CLASS_TYPES = ["PowerUp", "Bootcamp"]
 
             return render_template(
                 "student/edit-student.html",
                 student=student,
-                locations=locations,
-                class_types=class_types,
+                locations=LOCATIONS,
+                class_types=CLASS_TYPES,
             )
 
         except sqlite3.Error as e:
@@ -219,15 +283,15 @@ def confirm_edit():
                 ),
             )
             con.commit()
+
+            msg = "You have sucsessfully edited a student."
+            return render_template(
+                "user_feedback/confirm-edit.html",
+                msg=msg,
+                class_id=upd_student["class_id"],
+            )
         finally:
             con.close()
-
-        msg = "You have sucsessfully edited a student."
-        return render_template(
-            "user_feedback/confirm-edit.html",
-            msg=msg,
-            class_id=upd_student["class_id"],
-        )
 
 
 @app.route("/delete_student", methods=["GET", "POST"])
@@ -257,7 +321,7 @@ def delete_student():
 # --- Navigation Related Routes ---
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
-    if request.method == "POST":
+    try:
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
         con.row_factory = sqlite3.Row
@@ -266,3 +330,5 @@ def homepage():
         classes = cur.execute("SELECT * from class")
         if classes:
             return render_template("course_class/homepage.html", classes=classes)
+    finally:
+        con.close()
