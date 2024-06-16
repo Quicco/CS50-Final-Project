@@ -1,5 +1,73 @@
-ul {
+/* --- Styling Variables ---*/
+:root {
+  --main-clr: #2E7D32;
+  --secondary-clr: #0288D1;
+  --accent-clr: #FFD54F;
+  --bcg-clr: #FAFAFA;
+
+  --color: #212121;
+  --border-clr: #BDBDBD;
+
+  --logo-ff: "EB Garamond"
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* --- Body Styling ---*/
+body {
+  background-color: var(--bcg-clr);
+  color: #212121;
+  font-family: "Rubik";
+  height: 100dvh;
+  width: 100dvw;
+}
+
+/* --- Header Styling ---*/
+header {
+  height: 80px;
   display: flex;
-  list-style-type: none;
   justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  font-family: var(--logo-ff);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.logo {
+  height: 80px;
+  width: 80px;
+}
+
+.green {
+  color: var(--main-clr);
+}
+
+.gvu {
+  color: var(--secondary-clr);
+}
+
+input[type="submit"] {
+  background-color: var(--secondary-clr);
+  color: #fff;
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: 4px;
+}
+
+/* --- Main Page Styling */
+main {
+  
+  max-width: 80%;
+}
+
+ul {
+  list-style: none;
 }
