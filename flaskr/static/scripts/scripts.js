@@ -6,6 +6,5 @@ function goBack() {
 // Prompt the user whether or not they want to delete a student
 function confirmDeletion() {
   const message = "Are you sure you want to delete this student?"
-
- return confirm(message);
+  return confirm(message);
 }

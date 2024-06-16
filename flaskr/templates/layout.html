@@ -8,8 +8,20 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">  
   <title>Student Manager</title>
 </head>
+
 <body>
-   {% block body %} {% endblock %}
+  <header>
+    <nav>
+      <ul>
+        
+        <li><a href="#">View and Manage Students</a></li>
+      </ul>
+    </nav>
+  </header>
+
+   {% block body %} 
+
+   {% endblock %}
    <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
 </body>
 </html>

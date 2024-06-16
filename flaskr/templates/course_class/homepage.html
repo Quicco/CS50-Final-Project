@@ -1,10 +1,6 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<header>
-  <!--TODO-->
-</header>
-
 <h1>Ongoing classes</h1>
 
 <ul>
@@ -28,7 +24,7 @@
           <td>{{ class['location'] }}</td>
           <td>{{ class['year'] }}</td>
           <td>
-            <form action="/class_view" method="post">
+            <form action="/student_list" method="post">
             <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
             <button type="submit">Select</button>
             </form>

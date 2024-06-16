@@ -1,17 +1,16 @@
-{% extends "layout.html"%}
+{% extends "layout.html" %}
 
 {% block body %}
-<header></header>
 <h1>Add a student</h1>
 
 <form action="/confirm_add" method="post">
   <input type="hidden" name="class_id" value="{{ class_id }}">
   <label for="name">Name</label>
-  <input id="name" name="name" type="text">
+  <input id="name" name="name" type="text" required>
   <label for="email">Email</label>
-  <input id="email" name="email" type="text">
+  <input id="email" name="email" type="text" required>
   <label for="phone">Phone</label>
-  <input id="phone" name="phone" type="text">
+  <input id="phone" name="phone" type="text" required>
   <label for="location">Location</label>
   <select name="location" id="location">
     {% for location in locations %}
@@ -27,4 +26,6 @@
   
   <button type="submit">Submit</button>
 </form>
+
+{{ msg }}
 {% endblock %}

@@ -1,11 +1,14 @@
 {% extends "layout.html" %} 
 
 {% block body %}
-<header></header>
 <h1>Students List</h1>
 
+<!--Go back to the homepage-->
 {% block return %}
-<button onclick="goBack()">&#8592</button>
+<form action="/homepage" method="post">
+  <input type="submit" value="<--">
+</form>
+<button onclick="goBack()"></button>
 {% endblock %}
 
 <ul>

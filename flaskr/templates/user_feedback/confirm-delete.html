@@ -1,5 +1,12 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
 
 {% block body %}
+
 {{ msg }}
+
+<form action="/student_list" method="post">
+  <input type="hidden" name="class_id" value="{{ class_id }}">
+  <input type="submit" value="Go back">
+</form>
+
 {% endblock %}

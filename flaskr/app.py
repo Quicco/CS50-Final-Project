@@ -12,6 +12,7 @@ def index():
     return render_template("login-form.html")
 
 
+# --- Login Related Routes ---
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -33,9 +34,7 @@ def login():
             results = cur.fetchone()
 
             if results and ph.verify(results["password"], pw):
-                cur.execute("SELECT * FROM class")
-                results = cur.fetchall()
-                classes = [dict(row) for row in results]
+                classes = cur.execute("SELECT * FROM class")
                 return render_template("course_class/homepage.html", classes=classes)
             else:
                 # TODO: CREATE ERROR USER INPUTS
@@ -46,9 +45,9 @@ def login():
             con.close()
 
 
-# ---Class Related Routes---
-@app.route("/class_view", methods=["GET", "POST"])
-def class_view():
+# --- Class Related Routes ---
+@app.route("/student_list", methods=["GET", "POST"])
+def student_list():
     if request.method == "POST":
         class_id = request.form.get("class_id")
 
@@ -67,7 +66,7 @@ def class_view():
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template(
-                "course_class/classview.html", students=students, class_id=class_id
+                "course_class/student-list.html", students=students, class_id=class_id
             )
 
         except sqlite3.Error as e:
@@ -75,10 +74,8 @@ def class_view():
         finally:
             con.close()
 
-    return
 
-
-# ---Student Related Routes---
+# --- Student Related Routes ---
 @app.route("/add_student", methods=["GET", "POST"])
 def add_student():
     if request.method == "POST":
@@ -98,14 +95,25 @@ def add_student():
 @app.route("/confirm_add", methods=["GET", "POST"])
 def confirm_add():
     if request.method == "POST":
+
         try:
-            class_id = request.form.get("class_id")
-            name = request.form.get("name")
-            email = request.form.get("email")
-            phone = request.form.get("phone")
-            location = request.form.get("location")
-            course = "Junior Fullstack Developer"  # TODO Update this part so it's not hardcoded
-            class_type = request.form.get("class_type")
+            new_student = {
+                "class_id": request.form.get("class_id"),
+                "name": request.form.get("name"),
+                "email": request.form.get("email"),
+                "phone": request.form.get("phone"),
+                "location": request.form.get("location"),
+                "course": "Junior Fullstack Developer",
+                "class_type": request.form.get("class_type"),
+            }
+
+            if (
+                new_student["name"] == None
+                or new_student["email"] == None
+                or new_student["phone"] == None
+            ):
+                msg = "Please fill in the student's information."
+                return render_template("student/add-student.html", msg)
 
             # Return dicts instead of tuples
             con = sqlite3.connect(db_path)
@@ -114,17 +122,27 @@ def confirm_add():
 
             cur.execute(
                 """INSERT into student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? ,?, ?, ? )""",
-                (name, email, phone, location, course, class_type, class_id),
+                (
+                    new_student["name"],
+                    new_student["email"],
+                    new_student["phone"],
+                    new_student["location"],
+                    new_student["course"],
+                    new_student["class_type"],
+                    new_student["class_id"],
+                ),
             )
             con.commit()
 
             query = """SELECT * FROM student WHERE class_id = (?);"""
-            cur.execute(query, (class_id,))
+            cur.execute(query, (new_student["class_id"],))
 
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template(
-                "course_class/classview.html", students=students, class_id=class_id
+                "course_class/student-list.html",
+                students=students,
+                class_id=new_student["class_id"],
             )
         finally:
             con.close()
@@ -172,13 +190,17 @@ def edit_student():
 @app.route("/confirm_edit", methods=["GET", "POST"])
 def confirm_edit():
     if request.method == "POST":
+
         try:
-            student_id = request.form.get("student_id")
-            upd_name = request.form.get("name")
-            upd_email = request.form.get("email")
-            upd_phone = request.form.get("phone")
-            upd_location = request.form.get("location")
-            upd_class_type = request.form.get("class_type")
+            upd_student = {
+                "student_id": request.form.get("student_id"),
+                "class_id": request.form.get("class_id"),
+                "upd_name": request.form.get("name"),
+                "upd_email": request.form.get("email"),
+                "upd_phone": request.form.get("phone"),
+                "upd_location": request.form.get("location"),
+                "upd_class_type": request.form.get("class_type"),
+            }
 
             # Return dicts instead of tuples
             con = sqlite3.connect(db_path)
@@ -188,12 +210,12 @@ def confirm_edit():
             cur.execute(
                 """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
                 (
-                    upd_name,
-                    upd_email,
-                    upd_phone,
-                    upd_location,
-                    upd_class_type,
-                    student_id,
+                    upd_student["upd_name"],
+                    upd_student["upd_email"],
+                    upd_student["upd_phone"],
+                    upd_student["upd_location"],
+                    upd_student["upd_class_type"],
+                    upd_student["student_id"],
                 ),
             )
             con.commit()
@@ -201,13 +223,18 @@ def confirm_edit():
             con.close()
 
         msg = "You have sucsessfully edited a student."
-        return render_template("user_feedback/confirm-edit.html", msg=msg)
+        return render_template(
+            "user_feedback/confirm-edit.html",
+            msg=msg,
+            class_id=upd_student["class_id"],
+        )
 
 
 @app.route("/delete_student", methods=["GET", "POST"])
 def delete_student():
     if request.method == "POST":
         student_id = request.form.get("student_id")
+        class_id = request.form.get("class_id")
 
         if student_id:
             try:
@@ -222,4 +249,20 @@ def delete_student():
                 con.close()
 
         msg = "You have sucsessfully deleted a student."
-        return render_template("user_feedback/confirm-delete.html", msg=msg)
+        return render_template(
+            "user_feedback/confirm-delete.html", msg=msg, class_id=class_id
+        )
+
+
+# --- Navigation Related Routes ---
+@app.route("/homepage", methods=["GET", "POST"])
+def homepage():
+    if request.method == "POST":
+        # Return dicts instead of tuples
+        con = sqlite3.connect(db_path)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+
+        classes = cur.execute("SELECT * from class")
+        if classes:
+            return render_template("course_class/homepage.html", classes=classes)
