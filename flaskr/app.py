@@ -159,7 +159,6 @@ def add_student():
 @app.route("/confirm_add", methods=["GET", "POST"])
 def confirm_add():
     if request.method == "POST":
-
         try:
             new_student = {
                 "class_id": request.form.get("class_id"),
@@ -198,14 +197,15 @@ def confirm_add():
             )
             con.commit()
 
+            # TODO: Create a confirmation page for when you add a student
+
             query = """SELECT * FROM student WHERE class_id = (?);"""
             cur.execute(query, (new_student["class_id"],))
 
             results = cur.fetchall()
             students = [dict(row) for row in results]
             return render_template(
-                "course_class/student-list.html",
-                students=students,
+                "user_feedback/confirm-add.html",
                 class_id=new_student["class_id"],
             )
         finally:
@@ -248,7 +248,6 @@ def edit_student():
             return f"Database error: {e}"
         finally:
             con.close()
-    return render_template("")
 
 
 @app.route("/confirm_edit", methods=["GET", "POST"])

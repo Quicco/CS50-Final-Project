@@ -21,6 +21,7 @@
   {% if students|length < 24 %}
   <form action="/add_student" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
+    <input name="page" type="hidden" value="{{ page }}" />
     <button>Add</button>
   </form>
   {% endif %}
