@@ -260,6 +260,23 @@ def edit_student():
 def confirm_edit():
     if request.method == "POST":
 
+        if not validate_phone_num(request.form.get("phone")):
+            unedited_student = {
+                "name": request.form.get("name"),
+                "email": request.form.get("email"),
+                "phone": "",
+                "location": request.form.get("location"),
+                "class_type": request.form.get("class_type"),
+            }
+
+            msg = "That's not a valid phone number."
+            return render_template(
+                "student/edit-student.html",
+                msg=msg,
+                student=unedited_student,
+                locations=LOCATIONS,
+                class_types=CLASS_TYPES,
+            )
         try:
             upd_student = {
                 "student_id": request.form.get("student_id"),

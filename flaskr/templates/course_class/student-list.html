@@ -43,6 +43,7 @@
       <tbody>
         {% for student in students_per_page %}
         <tr>
+          <td><input type="checkbox" name="selected" id="selected"></td>
           <td>{{ student['name'] }}</td>
           <td>{{ student['email'] }}</td>
           <td>{{ student['phone'] }}</td>
