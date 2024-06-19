@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for, request, session, redirect, jsonify
 from argon2 import PasswordHasher
+from utils import validate_phone_num, LOCATIONS, CLASS_TYPES
 import sqlite3
 
 app = Flask(__name__)
@@ -145,8 +146,6 @@ def add_student():
     if request.method == "POST":
 
         class_id = request.form.get("class_id")
-        LOCATIONS = ["Lisbon", "Sintra", "Porto"]
-        CLASS_TYPES = ["PowerUp", "Bootcamp"]
 
         return render_template(
             "student/add-student.html",
@@ -159,12 +158,24 @@ def add_student():
 @app.route("/confirm_add", methods=["GET", "POST"])
 def confirm_add():
     if request.method == "POST":
+
+        valid_phone = validate_phone_num(request.form.get("phone"))
+        if not valid_phone:
+            msg = "That's not a valid phone number."
+            return render_template(
+                "student/add-student.html",
+                msg=msg,
+                locations=LOCATIONS,
+                class_types=CLASS_TYPES,
+            )
+
         try:
+
             new_student = {
                 "class_id": request.form.get("class_id"),
                 "name": request.form.get("name"),
                 "email": request.form.get("email"),
-                "phone": request.form.get("phone"),
+                "phone": valid_phone,
                 "location": request.form.get("location"),
                 "course": "Junior Fullstack Developer",
                 "class_type": request.form.get("class_type"),
@@ -176,7 +187,7 @@ def confirm_add():
                 or new_student["phone"] == None
             ):
                 msg = "Please fill in the student's information."
-                return render_template("student/add-student.html", msg)
+                return render_template("student/add-student.html", msg=msg)
 
             # Return dicts instead of tuples
             con = sqlite3.connect(db_path)
@@ -197,16 +208,11 @@ def confirm_add():
             )
             con.commit()
 
-            # TODO: Create a confirmation page for when you add a student
-
-            query = """SELECT * FROM student WHERE class_id = (?);"""
-            cur.execute(query, (new_student["class_id"],))
-
-            results = cur.fetchall()
-            students = [dict(row) for row in results]
+            msg = "Student has sucessfully been added."
             return render_template(
                 "user_feedback/confirm-add.html",
                 class_id=new_student["class_id"],
+                msg=msg,
             )
         finally:
             con.close()

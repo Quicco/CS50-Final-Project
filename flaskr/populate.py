@@ -1,5 +1,6 @@
 import sqlite3
 import random
+from utils import validate_phone_num
 from argon2 import PasswordHasher
 from faker import Faker
 
@@ -43,10 +44,11 @@ def create_tables():
     con.commit()
 
 
+# Populate all tables (teacher, class, students) of the db
 def populate_db():
     fake = Faker("pt_PT")
 
-    # Populate teacher table
+    # --- Populate teacher table ---
     DEV_NAME = "Tiago"
     DEV_MAIL = "admin@dev.com"
     DEV_PW = ph.hash("123")
@@ -55,7 +57,8 @@ def populate_db():
         "INSERT INTO teacher (name, email, password, class_id) VALUES (?, ?, ?, ?)",
         (DEV_NAME, DEV_MAIL, DEV_PW, DEV_CLASS),
     )
-    # Populate class table
+
+    # --- Populate class table ---
     classes = [
         {
             "course": "Junior Fullstack Developer",
@@ -79,7 +82,8 @@ def populate_db():
             values,
         )
     con.commit()
-    # Populate student table
+
+    # --- Populate student table ---
     students = []
     # Create a list with 24 ones and 24 twos
     class_ids = [1] * 24 + [2] * 24
@@ -91,7 +95,7 @@ def populate_db():
             {
                 "name": fake.name(),
                 "email": fake.email(),
-                "phone": fake.phone_number(),
+                "phone": validate_phone_num(fake.phone_number()),
                 "location": "Lisbon",
                 "course": "Junior Fullstack Developer",
                 "class_type": "PowerUp",
