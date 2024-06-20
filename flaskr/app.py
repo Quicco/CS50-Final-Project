@@ -1,13 +1,17 @@
-from flask import Flask, render_template, url_for, request, session, redirect, jsonify
+from flask import Flask, render_template, request, session, redirect
 from argon2 import PasswordHasher
+from dotenv import load_dotenv
+import os
 from utils import validate_phone_num, LOCATIONS, CLASS_TYPES
 import sqlite3
 
+load_dotenv()
+
 app = Flask(__name__)
 
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-app.secret_key = "THIS_IS_CS_50"
+app.config["SESSION_PERMANENT"] = os.getenv("SESSION_PERMANENT", "False") == "True"
+app.config["SESSION_TYPE"] = os.getenv("SESSION_TYPE", "filesystem")
+app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
 
 db_path = "database.db"
 ph = PasswordHasher()
