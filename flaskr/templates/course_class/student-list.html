@@ -23,6 +23,7 @@
     <input name="class_id" type="hidden" value="{{ class_id }}" />
     <input name="page" type="hidden" value="{{ page }}" />
     <button>Add</button>
+    {{ students|length}}
   </form>
   {% endif %}
 
@@ -43,7 +44,6 @@
       <tbody>
         {% for student in students_per_page %}
         <tr>
-          <td><input type="checkbox" name="selected" id="selected"></td>
           <td>{{ student['name'] }}</td>
           <td>{{ student['email'] }}</td>
           <td>{{ student['phone'] }}</td>
@@ -56,6 +56,11 @@
                 name="student_id"
                 type="hidden"
                 value="{{ student['student_id'] }}"
+              />
+              <input
+                name="class_id"
+                type="hidden"
+                value="{{ student['class_id'] }}"
               />
               <button type="submit">Edit</button>
             </form>

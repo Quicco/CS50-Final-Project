@@ -65,11 +65,12 @@ def logout():
 @app.route("/student_list", methods=["GET", "POST"])
 def student_list():
     if request.method == "POST":
+
         class_id = request.form.get("class_id")
 
         if not class_id:
             # TODO Error message
-            return
+            print("ERROR - NO CLASS ID!")
 
         # Return dicts instead of tuples
         con = sqlite3.connect(db_path)
@@ -92,6 +93,7 @@ def student_list():
 
             return render_template(
                 "course_class/student-list.html",
+                students=students,
                 class_id=class_id,
                 students_per_page=students_per_page,
                 total_pages=total_pages,
@@ -107,6 +109,11 @@ def student_list():
 @app.route("/list")
 def list():
     class_id = request.args.get("class_id")
+
+    if not class_id:
+        # TODO Error message
+        print("ERROR - NO CLASS ID!")
+
     # Return dicts instead of tuples
     con = sqlite3.connect(db_path)
     con.row_factory = sqlite3.Row
@@ -128,6 +135,7 @@ def list():
 
         return render_template(
             "course_class/student-list.html",
+            students=students,
             class_id=class_id,
             students_per_page=students_per_page,
             total_pages=total_pages,
@@ -141,6 +149,105 @@ def list():
 
 
 # --- Student Related Routes ---
+@app.route("/edit_student", methods=["GET", "POST"])
+def edit_student():
+    if request.method == "POST":
+        student_id = request.form.get("student_id")
+
+        if not student_id:
+            error = "Sorry, an error has occurred."
+            return render_template("course_class/homepage", error=error)
+
+        # Return dicts instead of tuples
+        con = sqlite3.connect(db_path)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+
+        try:
+            query = "SELECT * FROM student WHERE student_id = (?)"
+            cur.execute(
+                query,
+                (student_id,),
+            )
+            student = cur.fetchone()
+
+            return render_template(
+                "student/edit-student.html",
+                student=student,
+                locations=LOCATIONS,
+                class_types=CLASS_TYPES,
+            )
+
+        except sqlite3.Error as e:
+            return f"Database error: {e}"
+        finally:
+            con.close()
+
+
+@app.route("/confirm_edit", methods=["GET", "POST"])
+def confirm_edit():
+    if request.method == "POST":
+
+        print(request.form)
+
+        # If it's not a valid phone number, keep old info but reset the phone field
+        if not validate_phone_num(request.form.get("phone")):
+            unedited_student = {
+                "name": request.form.get("name"),
+                "email": request.form.get("email"),
+                "phone": "",
+                "location": request.form.get("location"),
+                "class_type": request.form.get("class_type"),
+            }
+
+            msg = "That's not a valid phone number."
+            return render_template(
+                "student/edit-student.html",
+                msg=msg,
+                student=unedited_student,
+                locations=LOCATIONS,
+                class_types=CLASS_TYPES,
+            )
+
+        try:
+            upd_student = {
+                "student_id": request.form.get("student_id"),
+                "class_id": request.form.get("class_id"),
+                "upd_name": request.form.get("name"),
+                "upd_email": request.form.get("email"),
+                "upd_phone": request.form.get("phone"),
+                "upd_location": request.form.get("location"),
+                "upd_class_type": request.form.get("class_type"),
+            }
+
+            # Return dicts instead of tuples
+            con = sqlite3.connect(db_path)
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+
+            cur.execute(
+                """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
+                (
+                    upd_student["upd_name"],
+                    upd_student["upd_email"],
+                    upd_student["upd_phone"],
+                    upd_student["upd_location"],
+                    upd_student["upd_class_type"],
+                    upd_student["student_id"],
+                ),
+            )
+            con.commit()
+
+            msg = "You have sucsessfully edited a student."
+            return render_template(
+                "user_feedback/confirm-edit.html",
+                msg=msg,
+                class_id=upd_student["class_id"],
+            )
+        finally:
+            con.close()
+
+
 @app.route("/add_student", methods=["GET", "POST"])
 def add_student():
     if request.method == "POST":
@@ -213,104 +320,6 @@ def confirm_add():
                 "user_feedback/confirm-add.html",
                 class_id=new_student["class_id"],
                 msg=msg,
-            )
-        finally:
-            con.close()
-
-
-@app.route("/edit_student", methods=["GET", "POST"])
-def edit_student():
-    if request.method == "POST":
-        student_id = request.form.get("student_id")
-
-        if not student_id:
-            error = "Sorry, an error has occurred."
-            return render_template("course_class/homepage", error=error)
-
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
-
-        try:
-            query = "SELECT * FROM student WHERE student_id = (?)"
-            cur.execute(
-                query,
-                (student_id,),
-            )
-            student = cur.fetchone()
-
-            LOCATIONS = ["Lisbon", "Sintra", "Porto"]
-            CLASS_TYPES = ["PowerUp", "Bootcamp"]
-
-            return render_template(
-                "student/edit-student.html",
-                student=student,
-                locations=LOCATIONS,
-                class_types=CLASS_TYPES,
-            )
-
-        except sqlite3.Error as e:
-            return f"Database error: {e}"
-        finally:
-            con.close()
-
-
-@app.route("/confirm_edit", methods=["GET", "POST"])
-def confirm_edit():
-    if request.method == "POST":
-
-        if not validate_phone_num(request.form.get("phone")):
-            unedited_student = {
-                "name": request.form.get("name"),
-                "email": request.form.get("email"),
-                "phone": "",
-                "location": request.form.get("location"),
-                "class_type": request.form.get("class_type"),
-            }
-
-            msg = "That's not a valid phone number."
-            return render_template(
-                "student/edit-student.html",
-                msg=msg,
-                student=unedited_student,
-                locations=LOCATIONS,
-                class_types=CLASS_TYPES,
-            )
-        try:
-            upd_student = {
-                "student_id": request.form.get("student_id"),
-                "class_id": request.form.get("class_id"),
-                "upd_name": request.form.get("name"),
-                "upd_email": request.form.get("email"),
-                "upd_phone": request.form.get("phone"),
-                "upd_location": request.form.get("location"),
-                "upd_class_type": request.form.get("class_type"),
-            }
-
-            # Return dicts instead of tuples
-            con = sqlite3.connect(db_path)
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
-
-            cur.execute(
-                """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
-                (
-                    upd_student["upd_name"],
-                    upd_student["upd_email"],
-                    upd_student["upd_phone"],
-                    upd_student["upd_location"],
-                    upd_student["upd_class_type"],
-                    upd_student["student_id"],
-                ),
-            )
-            con.commit()
-
-            msg = "You have sucsessfully edited a student."
-            return render_template(
-                "user_feedback/confirm-edit.html",
-                msg=msg,
-                class_id=upd_student["class_id"],
             )
         finally:
             con.close()
