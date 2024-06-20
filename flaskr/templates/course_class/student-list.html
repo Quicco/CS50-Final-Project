@@ -17,13 +17,12 @@
 </form>
 {% endblock %}
 
-<ul>
+<ul class="container">
   {% if students|length < 24 %}
   <form action="/add_student" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
     <input name="page" type="hidden" value="{{ page }}" />
-    <button>Add</button>
-    {{ students|length}}
+    <button class="add-btn">Add</button>
   </form>
   {% endif %}
 
@@ -31,7 +30,7 @@
 
   <li>
     <table class="table table-striped table-hover">
-      <thead class="thead-dark">
+      <thead>
         <tr>
           <th>Name</th>
           <th>Email</th>
@@ -62,7 +61,7 @@
                 type="hidden"
                 value="{{ student['class_id'] }}"
               />
-              <button type="submit">Edit</button>
+              <input id="edit-btn" type="submit" value="Edit">
             </form>
           </td>
           <td>
@@ -73,7 +72,7 @@
                 value="{{ student['student_id'] }}"
               />
               <input name="class_id" type="hidden" value="{{ class_id }}" />
-              <button type="submit">Delete</button>
+              <input id="delete-btn" type="submit" value="Delete">
             </form>
           </td>
         </tr>
@@ -87,13 +86,15 @@
   {% endif %}
 </ul>
 
+<div class="pagination">
 {% if page > 1 %}
-  <a href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
+  <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
 {% endif %}
-  <span>Page {{ page }} of {{ total_pages }}</span>
+  <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
 {% if page < total_pages %}
-  <a href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
+  <a class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
 {% endif %}
+</div>
 </main>
 
 {% endblock %}

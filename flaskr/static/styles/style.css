@@ -1,7 +1,9 @@
 /* --- Styling Variables ---*/
 :root {
   --main-clr: #2E7D32;
+  --main-hover-clr: #3fa544;
   --secondary-clr: #0288D1;
+  --hover-clr: #0599e9;
   --accent-clr: #FFD54F;
   --bcg-clr: #FAFAFA;
 
@@ -46,7 +48,7 @@ header {
   width: 80px;
 }
 
-.green {
+.green-text {
   color: var(--main-clr);
 }
 
@@ -61,13 +63,72 @@ input[type="submit"] {
   padding: .5rem 1rem;
   border-radius: 4px;
 }
+input[type="submit"]:hover {
+  cursor: pointer;
+  background-color: var(--hover-clr);
+}
 
-/* --- Main Page Styling */
+/* --- Main Page Styling ---*/
 main {
-  
+  margin-top: 20px;
   max-width: 80%;
 }
 
 ul {
   list-style: none;
+}
+
+/* --- Table styling --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: var(--main-clr);
+  font-size: 1.25rem;
+  color: #fff;
+  text-align: center;
+  vertical-align: center;
+  width: 100%;
+}
+
+tr {
+  font-weight: 500;
+}
+
+.test {
+  text-align: center;
+  padding: 2rem;
+  margin: 50px;
+}
+
+#select-btn {
+  padding: .25rem .5rem;
+}
+
+.add-btn {
+  border: none;
+  background-color: var(--main-clr);
+  color: #fff;
+  padding: .5rem 1rem;
+  border-radius: 4px;
+}
+.add-btn:hover {
+  cursor: pointer;
+  background-color: var(--main-hover-clr);
+}
+
+/* #delete-btn {
+  background-color: rgb(201, 2, 2);
+} */
+
+.pagination {
+  margin-bottom: .25rem;
+  display: flex;
+  gap: 10px;
+}
+
+.pages {
+  color: var(--color);
 }

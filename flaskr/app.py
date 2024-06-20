@@ -363,3 +363,6 @@ def homepage():
             return render_template("course_class/homepage.html", classes=classes)
     finally:
         con.close()
+
+
+# --- Class Related Routes ---
