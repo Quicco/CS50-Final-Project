@@ -353,6 +353,11 @@ def delete_student():
         )
 
 
+@app.route("/promote", methods=["GET", "POST"])
+def promote():
+    return
+
+
 # --- Navigation Related Routes ---
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():

@@ -37,10 +37,14 @@ header {
 }
 
 .logo-container {
+  text-decoration: none;
   font-family: var(--logo-ff);
   display: flex;
   align-items: center;
   gap: 4px;
+}
+.logo-container:hover {
+  text-decoration: none;
 }
 
 .logo {
@@ -53,6 +57,7 @@ header {
 }
 
 .gvu {
+  text-decoration: none;
   color: var(--secondary-clr);
 }
 
@@ -106,7 +111,7 @@ tr {
 #select-btn {
   padding: .25rem .5rem;
 }
-
+/* --- Students List Page --- */
 .add-btn {
   border: none;
   background-color: var(--main-clr);
@@ -123,8 +128,13 @@ tr {
   background-color: rgb(201, 2, 2);
 } */
 
-.pagination {
+.options {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: .25rem;
+}
+
+.pagination {
   display: flex;
   gap: 10px;
 }
