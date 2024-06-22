@@ -98,7 +98,6 @@ def student_list():
     if request.method == "POST":
 
         class_id = request.form.get("class_id")
-        print("CLASS ID HERE --> ", class_id)
 
         if not class_id:
             # TODO Error message
@@ -114,6 +113,30 @@ def student_list():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+        )
+
+
+@app.route("/advance", methods=["GET", "POST"])
+def advance():
+    if request.method == "POST":
+
+        class_id = request.form.get("class_id")
+
+        if not class_id:
+            # TODO Error message
+            print("ERROR - NO CLASS ID!")
+
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+
+        return render_template(
+            "course_class/student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+            promotion_view=True,
         )
 
 
