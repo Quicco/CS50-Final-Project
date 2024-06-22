@@ -66,48 +66,55 @@ def logout():
 
 
 # --- Class Related Routes ---
+def fetch_students(class_id, page):
+    # Return dicts instead of tuples
+    con = sqlite3.connect(db_path)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    try:
+        query = """SELECT * FROM student WHERE class_id = (?);"""
+        cur.execute(query, (class_id,))
+        results = cur.fetchall()
+        students = [dict(row) for row in results]
+
+        # Pagination
+        per_page = 12
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(students) + per_page - 1) // per_page
+        students_per_page = students[start:end]
+
+        return students, students_per_page, total_pages
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
 @app.route("/student_list", methods=["GET", "POST"])
 def student_list():
     if request.method == "POST":
 
         class_id = request.form.get("class_id")
+        print("CLASS ID HERE --> ", class_id)
 
         if not class_id:
             # TODO Error message
             print("ERROR - NO CLASS ID!")
 
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
 
-        try:
-            query = """SELECT * FROM student WHERE class_id = (?);"""
-            cur.execute(query, (class_id,))
-            results = cur.fetchall()
-            students = [dict(row) for row in results]
-
-            # Pagination
-            page = request.args.get("page", 1, type=int)
-            per_page = 12
-            start = (page - 1) * per_page
-            end = start + per_page
-            total_pages = (len(students) + per_page - 1) // per_page
-            students_per_page = students[start:end]
-
-            return render_template(
-                "course_class/student-list.html",
-                students=students,
-                class_id=class_id,
-                students_per_page=students_per_page,
-                total_pages=total_pages,
-                page=page,
-            )
-
-        except sqlite3.Error as e:
-            return f"Database error: {e}"
-        finally:
-            con.close()
+        return render_template(
+            "course_class/student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+        )
 
 
 @app.route("/list")
@@ -153,6 +160,8 @@ def list():
 
 
 # --- Student Related Routes ---
+
+
 @app.route("/edit_student", methods=["GET", "POST"])
 def edit_student():
     if request.method == "POST":
@@ -372,6 +381,3 @@ def homepage():
             return render_template("course_class/homepage.html", classes=classes)
     finally:
         con.close()
-
-
-# --- Class Related Routes ---
