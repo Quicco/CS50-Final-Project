@@ -12,11 +12,11 @@
   {% if promotion_view %}
   <form action="/student_list" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
-    <input type="submit" value="Go back">
+    <input class="back-btn" type="submit" value="Go back">
   </form>
   {% else %}
 <form action="/homepage" method="post">
-  <input type="submit" value="Go back">
+  <input class="back-btn" type="submit" value="Go back">
 </form>
   {% endif %}
 {% endblock %}
@@ -45,6 +45,7 @@
         <a class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
       {% endif %}
       </div>
+
       <!-- Promotion Button-->
        {% if promotion_view %}
       <form action="/advance" method="post">

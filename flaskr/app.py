@@ -49,7 +49,9 @@ def login():
 
             if results and ph.verify(results["password"], pw):
                 classes = cur.execute("SELECT * FROM class")
-                return render_template("course_class/homepage.html", classes=classes)
+                return render_template(
+                    "course_class/homepage.html", classes=classes, loggedin=True
+                )
             else:
                 # TODO: CREATE ERROR USER INPUTS
                 return "NO USER!! >:("

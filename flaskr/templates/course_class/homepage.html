@@ -11,10 +11,12 @@
     </a>
   </div>
 
+  {% if loggedin %}
   <nav>
     <form action="/logout">
       <input type="submit" value="Logout">
     </form>
+    {% endif %}
   </nav>
 </header>
 
@@ -33,6 +35,7 @@
           <th>Time Slot</th>
           <th>Location</th>
           <th>Year</th>
+          <th></th>
           </tr>
           </thead>
           <tbody>

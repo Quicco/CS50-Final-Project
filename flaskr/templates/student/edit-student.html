@@ -9,6 +9,7 @@
 {% endblock %}
 
 <form action="/confirm_edit" method="post">
+  <input type="hidden" name="action" value="">
   <input name="class_id" type="hidden" value="{{ student['class_id'] }}" />
   <input name="student_id" type="hidden" value="{{ student['student_id'] }}" />
 

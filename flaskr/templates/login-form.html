@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<header></header>
+
+{% block header %}
+<header class="container-fluid">
+  <div>
+    <a class="logo-container" href="{{ url_for('homepage') }}">
+      <img class="logo" src="{{ url_for('static', filename='img/GVU.png') }}" alt="Green valley university logo">
+      <h4 class="gvu"><span class="green-text">Green</span>ValleyUniversity</h4>
+    </a>
+  </div>
+</header>
+{% endblock %}
 
 <form action="/login" method="post">
   <h3 class="login-header">Welcome</h3> 
