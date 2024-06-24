@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
 import os
 from utils import validate_phone_num, LOCATIONS, CLASS_TYPES
@@ -15,11 +16,6 @@ app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
 
 db_path = "database.db"
 ph = PasswordHasher()
-
-
-@app.route("/")
-def index():
-    return render_template("login-form.html")
 
 
 # Handler functions
@@ -119,6 +115,11 @@ def unarchive_class(class_id):
 
 
 #  Login Related Routes
+@app.route("/")
+def index():
+    return render_template("login-form.html")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -139,18 +140,21 @@ def login():
             query = """SELECT email, password FROM teacher WHERE email = (?);"""
             cur.execute(query, (email,))
             results = cur.fetchone()
-
-            if results and ph.verify(results["password"], pw):
-                classes, archived = fetch_classes()
-                return render_template(
-                    "course_class/homepage.html",
-                    classes=classes,
-                    loggedin=True,
-                    archived=archived,
-                )
+            try:
+                if results and ph.verify(results["password"], pw):
+                    classes, archived = fetch_classes()
+                    return render_template(
+                        "course_class/homepage.html",
+                        classes=classes,
+                        loggedin=True,
+                        archived=archived,
+                    )
+            except VerifyMismatchError:
+                error = "Incorrect password"
+                return render_template("login-form.html", error=error)
             else:
-                # TODO: CREATE ERROR USER INPUTS
-                return "NO USER!! >:("
+                error = "Incorrect email or password"
+                return render_template("login-form.html", error=error)
         except sqlite3.Error as e:
             return f"Database error: {e}"
         finally:
@@ -207,10 +211,8 @@ def advance():
 
 @app.route("/list", methods=["GET", "POST"])
 def list():
-    print("HELLOOOOOOO")
     if request.method == "POST":
         class_id = request.form.get("class_id")
-        print("CLASS ID IS HERE --> ", class_id)
     else:
         class_id = request.args.get("class_id")
 
@@ -420,9 +422,16 @@ def delete_student():
             finally:
                 con.close()
 
-        msg = "You have sucsessfully deleted a student."
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+
         return render_template(
-            "user_feedback/confirm-delete.html", msg=msg, class_id=class_id
+            "course_class/student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
         )
 
 
