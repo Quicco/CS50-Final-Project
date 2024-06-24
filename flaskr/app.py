@@ -22,7 +22,29 @@ def index():
     return render_template("login-form.html")
 
 
-# --- Login Related Routes ---
+#  Login Related Routes
+def fetch_classes():
+    # Return dicts instead of tuples
+    con = sqlite3.connect(db_path)
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    try:
+        classes = cur.execute(
+            "SELECT * FROM class WHERE archived = 0 ORDER BY location;"
+        ).fetchall()
+        archived = cur.execute(
+            "SELECT * FROM class WHERE archived = 1 ORDER BY location;"
+        ).fetchall()
+
+        return classes, archived
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -48,9 +70,12 @@ def login():
             results = cur.fetchone()
 
             if results and ph.verify(results["password"], pw):
-                classes = cur.execute("SELECT * FROM class")
+                classes, archived = fetch_classes()
                 return render_template(
-                    "course_class/homepage.html", classes=classes, loggedin=True
+                    "course_class/homepage.html",
+                    classes=classes,
+                    loggedin=True,
+                    archived=archived,
                 )
             else:
                 # TODO: CREATE ERROR USER INPUTS
@@ -67,7 +92,7 @@ def logout():
     return redirect("/")
 
 
-# --- Class Related Routes ---
+#  Class Related Routes
 def fetch_students(class_id, page):
     # Return dicts instead of tuples
     con = sqlite3.connect(db_path)
@@ -184,7 +209,7 @@ def list():
         con.close()
 
 
-# --- Student Related Routes ---
+#  Student Related Routes
 
 
 @app.route("/edit_student", methods=["GET", "POST"])
@@ -392,17 +417,11 @@ def promote():
     return
 
 
-# --- Navigation Related Routes ---
+#  Navigation Related Routes
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
-    try:
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
-
-        classes = cur.execute("SELECT * from class")
-        if classes:
-            return render_template("course_class/homepage.html", classes=classes)
-    finally:
-        con.close()
+    classes, archived = fetch_classes()
+    if classes:
+        return render_template(
+            "course_class/homepage.html", classes=classes, archived=archived
+        )

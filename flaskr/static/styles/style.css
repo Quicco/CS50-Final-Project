@@ -34,7 +34,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border-clr);
 }
 
 .logo-container {
@@ -110,7 +109,7 @@ tr {
   font-weight: 500;
 }
 
-.test {
+.table-text {
   text-align: center;
   padding: 2rem;
   margin: 50px;

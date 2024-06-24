@@ -11,18 +11,20 @@ cur = con.cursor()
 ph = PasswordHasher()
 
 
+# Main function for the database - Create tables, then populate them
 def initialize_db():
     create_tables()
     populate_db()
 
 
+# Handler functions for the database
 def create_tables():
     queries = [
-        # teacher table
+        # Teacher table
         "CREATE TABLE IF NOT EXISTS teacher (teacher_id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, password TEXT, class_id INTEGER, FOREIGN KEY (class_id) REFERENCES class(class_id));",
-        # class table
-        "CREATE TABLE IF NOT EXISTS class (class_id INTEGER PRIMARY KEY, course TEXT, class_type TEXT, time_slot TEXT, location TEXT, year INTEGER);",
-        # student table
+        # Class table
+        "CREATE TABLE IF NOT EXISTS class (class_id INTEGER PRIMARY KEY, course TEXT, class_type TEXT, time_slot TEXT, location TEXT, year INTEGER, archived INTEGER);",
+        # Student table
         """CREATE TABLE IF NOT EXISTS student (
         student_id INTEGER PRIMARY KEY, 
         name TEXT, 
@@ -36,7 +38,7 @@ def create_tables():
         FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
         FOREIGN KEY (class_id) REFERENCES class(class_id)
         );""",
-        # class_teacher junction table
+        # Class_teacher junction table
         "CREATE TABLE IF NOT EXISTS class_teacher (class_id INTEGER, teacher_id INTEGER, PRIMARY KEY (class_id, teacher_id), FOREIGN KEY (class_id) REFERENCES class(class_id), FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
     ]
     for query in queries:
@@ -44,11 +46,11 @@ def create_tables():
     con.commit()
 
 
-# Populate all tables (teacher, class, students) of the db
+#  Populate all tables (teacher, class, students) of the db
 def populate_db():
     fake = Faker("pt_PT")
 
-    # --- Populate teacher table ---
+    #  Populate teacher table
     DEV_NAME = "Tiago"
     DEV_MAIL = "admin@dev.com"
     DEV_PW = ph.hash("123")
@@ -58,7 +60,7 @@ def populate_db():
         (DEV_NAME, DEV_MAIL, DEV_PW, DEV_CLASS),
     )
 
-    # --- Populate class table ---
+    #  Populate class table
     classes = [
         {
             "course": "Junior Fullstack Developer",
@@ -66,6 +68,7 @@ def populate_db():
             "time_slot": "Morning",
             "location": "Lisbon",
             "year": 2024,
+            "archived": 0,
         },
         {
             "course": "Junior Fullstack Developer",
@@ -73,20 +76,29 @@ def populate_db():
             "time_slot": "Afternoon",
             "location": "Lisbon",
             "year": 2024,
+            "archived": 0,
+        },
+        {
+            "course": "Junior Fullstack Developer",
+            "class_type": "PowerUp",
+            "time_slot": "Afternoon",
+            "location": "Sintra",
+            "year": 2024,
+            "archived": 1,
         },
     ]
     for group in classes:
         values = tuple(group.values())
         cur.execute(
-            "INSERT INTO class (course, class_type, time_slot, location, year) VALUES (?, ?, ?, ? , ?)",
+            "INSERT INTO class (course, class_type, time_slot, location, year, archived) VALUES (?, ?, ?, ? , ?, ?)",
             values,
         )
     con.commit()
 
-    # --- Populate student table ---
+    #  Populate student table
     students = []
     # Create a list with 24 ones and 24 twos
-    class_ids = [1] * 24 + [2] * 24
+    class_ids = [1] * 24 + [2] * 24 + [3] * 24
     # Shuffle the list to randomize the order
     random.shuffle(class_ids)
 
