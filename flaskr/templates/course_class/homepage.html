@@ -64,10 +64,10 @@
 
 {% if archived %}
 <form action="/student_list" method="post">
-<select name="archived" id="archived">
-  <option value="defaul" selected disabled hidden>Archived classes</option>
+<select name="class_id" id="archived">
+  <option value="" selected disabled hidden>Archived classes</option>
   {% for class in archived %}
-  <option name="class_id" value="{{ class['class_id'] }}">{{ class['class_type'] }} | {{ class['time_slot'] }} | {{ class['time_slot'] }} | {{ class['location'] }} | {{ class['year'] }}
+  <option value="{{ class['class_id'] }}">{{ class['class_type'] }} | {{ class['time_slot'] }} | {{ class['time_slot'] }} | {{ class['location'] }} | {{ class['year'] }}
   </option>
   {% endfor %}
 </select>

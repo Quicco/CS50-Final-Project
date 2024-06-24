@@ -23,6 +23,8 @@ def index():
 
 
 #  Login Related Routes
+
+
 def fetch_classes():
     # Return dicts instead of tuples
     con = sqlite3.connect(db_path)
