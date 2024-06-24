@@ -74,6 +74,50 @@ def fetch_students(class_id, page):
         con.close()
 
 
+def select_class(class_id):
+    page = request.args.get("page", 1, type=int)
+    students, students_per_page, total_pages = fetch_students(class_id, page)
+
+    return render_template(
+        "course_class/student-list.html",
+        students=students,
+        class_id=class_id,
+        students_per_page=students_per_page,
+        total_pages=total_pages,
+        page=page,
+    )
+
+
+def archive_class(class_id):
+    try:
+        con, cur = connect_to_db()
+
+        cur.execute("UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        return render_template(
+            "course_class/homepage.html", classes=classes, archived=archived
+        )
+    finally:
+        con.close()
+
+
+def unarchive_class(class_id):
+    try:
+        con, cur = connect_to_db()
+
+        cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?)", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        return render_template(
+            "course_class/homepage.html", classes=classes, archived=archived
+        )
+    finally:
+        con.close()
+
+
 #  Login Related Routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -120,7 +164,7 @@ def logout():
 
 
 #  Class Related Routes
-@app.route("/student_list", methods=["GET", "POST"])
+@app.route("/actions", methods=["GET", "POST"])
 def student_list():
     if request.method == "POST":
 
@@ -130,17 +174,12 @@ def student_list():
             # TODO Error message
             print("ERROR - NO CLASS ID!")
 
-        page = request.args.get("page", 1, type=int)
-        students, students_per_page, total_pages = fetch_students(class_id, page)
-
-        return render_template(
-            "course_class/student-list.html",
-            students=students,
-            class_id=class_id,
-            students_per_page=students_per_page,
-            total_pages=total_pages,
-            page=page,
-        )
+        if "action" in request.form and request.form.get("action") == "Select":
+            return select_class(class_id)
+        elif "action" in request.form and request.form.get("action") == "Archive":
+            return archive_class(class_id)
+        else:
+            return unarchive_class(class_id)
 
 
 @app.route("/advance", methods=["GET", "POST"])
@@ -204,27 +243,6 @@ def list():
         return f"Database error: {e}"
     finally:
         con.close()
-
-
-@app.route("/archive_class", methods=["GET", "POST"])
-def archive_class():
-    if request.method == "POST":
-        try:
-            class_id = request.form.get("class_id")
-
-            con, cur = connect_to_db()
-
-            cur.execute(
-                "UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,)
-            )
-            con.commit()
-
-            classes, archived = fetch_classes()
-            return render_template(
-                "course_class/homepage.html", classes=classes, archived=archived
-            )
-        finally:
-            con.close()
 
 
 #  Student Related Routes
