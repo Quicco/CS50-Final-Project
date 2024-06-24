@@ -8,3 +8,9 @@ function confirmDeletion() {
   const message = "Are you sure you want to delete this student?"
   return confirm(message);
 }
+
+// Prompt the user whether or not they want to archive a class
+function confirmArchive() {
+  const message = "Are you sure you want to archive this class?"
+  return confirm(message);
+}

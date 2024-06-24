@@ -49,15 +49,15 @@
           <td>{{ class['location'] }}</td>
           <td>{{ class['year'] }}</td>
           <td>
-            <form action="/student_list" method="post">
+            <form action="/actions" method="post">
             <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
-            <input id="select-btn" type="submit" value="Select">
+            <input name="action" id="select-btn" type="submit" value="Select">
             </form>
           </td>
           <td>
-            <form action="/archive_class" method="post">
+            <form action="/actions" method="post">
             <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
-            <input id="select-btn" type="submit" value="Archive">
+            <input name="action" onclick="return confirmArchive()"  id="select-btn" type="submit" value="Archive">
             </form>
           </td>
         </tr>
@@ -72,7 +72,7 @@
 {% if archived %}
 
 <h2>Archived Classes</h2>
-<form action="/student_list" method="post">
+<form action="/actions" method="post">
 <select name="class_id" id="archived">
   <option value="" selected disabled hidden>Select one</option>
   {% for class in archived %}
@@ -80,8 +80,8 @@
   </option>
   {% endfor %}
 </select>
-<input id="select-btn" type="submit" value="Select">
-<input id="select-btn" type="submit" value="Unarchive">
+<input name="action" id="select-btn" type="submit" value="Select">
+<input name="action" id="select-btn" type="submit" value="Unarchive">
 </form>
 
 {% endif %}
