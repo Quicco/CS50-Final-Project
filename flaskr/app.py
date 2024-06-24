@@ -22,16 +22,19 @@ def index():
     return render_template("login-form.html")
 
 
-#  Login Related Routes
-
-
-def fetch_classes():
+# Handler functions
+def connect_to_db():
     # Return dicts instead of tuples
     con = sqlite3.connect(db_path)
     con.row_factory = sqlite3.Row
     cur = con.cursor()
+    return con, cur
 
+
+def fetch_classes():
     try:
+        con, cur = connect_to_db()
+
         classes = cur.execute(
             "SELECT * FROM class WHERE archived = 0 ORDER BY location;"
         ).fetchall()
@@ -47,6 +50,31 @@ def fetch_classes():
         con.close()
 
 
+def fetch_students(class_id, page):
+    try:
+        con, cur = connect_to_db()
+
+        query = """SELECT * FROM student WHERE class_id = (?);"""
+        cur.execute(query, (class_id,))
+        results = cur.fetchall()
+        students = [dict(row) for row in results]
+
+        # Pagination
+        per_page = 12
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = (len(students) + per_page - 1) // per_page
+        students_per_page = students[start:end]
+
+        return students, students_per_page, total_pages
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
+#  Login Related Routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -61,10 +89,7 @@ def login():
             error = "Please fill in your email and password."
             return render_template("login.html", error=error)
 
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
+        con, cur = connect_to_db()
 
         try:
             query = """SELECT email, password FROM teacher WHERE email = (?);"""
@@ -95,33 +120,6 @@ def logout():
 
 
 #  Class Related Routes
-def fetch_students(class_id, page):
-    # Return dicts instead of tuples
-    con = sqlite3.connect(db_path)
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    try:
-        query = """SELECT * FROM student WHERE class_id = (?);"""
-        cur.execute(query, (class_id,))
-        results = cur.fetchall()
-        students = [dict(row) for row in results]
-
-        # Pagination
-        per_page = 12
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(students) + per_page - 1) // per_page
-        students_per_page = students[start:end]
-
-        return students, students_per_page, total_pages
-
-    except sqlite3.Error as e:
-        return f"Database error: {e}"
-    finally:
-        con.close()
-
-
 @app.route("/student_list", methods=["GET", "POST"])
 def student_list():
     if request.method == "POST":
@@ -177,10 +175,7 @@ def list():
         # TODO Error message
         print("ERROR - NO CLASS ID!")
 
-    # Return dicts instead of tuples
-    con = sqlite3.connect(db_path)
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
+    con, cur = connect_to_db()
 
     try:
         query = """SELECT * FROM student WHERE class_id = (?);"""
@@ -211,9 +206,28 @@ def list():
         con.close()
 
 
+@app.route("/archive_class", methods=["GET", "POST"])
+def archive_class():
+    if request.method == "POST":
+        try:
+            class_id = request.form.get("class_id")
+
+            con, cur = connect_to_db()
+
+            cur.execute(
+                "UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,)
+            )
+            con.commit()
+
+            classes, archived = fetch_classes()
+            return render_template(
+                "course_class/homepage.html", classes=classes, archived=archived
+            )
+        finally:
+            con.close()
+
+
 #  Student Related Routes
-
-
 @app.route("/edit_student", methods=["GET", "POST"])
 def edit_student():
     if request.method == "POST":
@@ -223,10 +237,7 @@ def edit_student():
             error = "Sorry, an error has occurred."
             return render_template("course_class/homepage", error=error)
 
-        # Return dicts instead of tuples
-        con = sqlite3.connect(db_path)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
+        con, cur = connect_to_db()
 
         try:
             query = "SELECT * FROM student WHERE student_id = (?)"
@@ -285,10 +296,7 @@ def confirm_edit():
                 "upd_class_type": request.form.get("class_type"),
             }
 
-            # Return dicts instead of tuples
-            con = sqlite3.connect(db_path)
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
+            con, cur = connect_to_db()
 
             cur.execute(
                 """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
@@ -361,10 +369,7 @@ def confirm_add():
                 msg = "Please fill in the student's information."
                 return render_template("student/add-student.html", msg=msg)
 
-            # Return dicts instead of tuples
-            con = sqlite3.connect(db_path)
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
+            con, cur = connect_to_db()
 
             cur.execute(
                 """INSERT into student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? ,?, ?, ? )""",
@@ -398,10 +403,7 @@ def delete_student():
 
         if student_id:
             try:
-                # Return dicts instead of tuples
-                con = sqlite3.connect(db_path)
-                con.row_factory = sqlite3.Row
-                cur = con.cursor()
+                con, cur = connect_to_db()
 
                 cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
                 con.commit()
@@ -425,5 +427,8 @@ def homepage():
     classes, archived = fetch_classes()
     if classes:
         return render_template(
-            "course_class/homepage.html", classes=classes, archived=archived
+            "course_class/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
         )

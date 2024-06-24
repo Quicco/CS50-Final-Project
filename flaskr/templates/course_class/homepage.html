@@ -23,9 +23,9 @@
 
 {% endblock %}
 <main class="container">
-<h2>Ongoing classes</h2>
 
 {% if classes %}
+<h2>Ongoing classes</h2>
 <ul>
   <li>
     <table class="table table-striped table-hover">
@@ -36,6 +36,7 @@
           <th>Time Slot</th>
           <th>Location</th>
           <th>Year</th>
+          <th></th>
           <th></th>
           </tr>
           </thead>
@@ -53,6 +54,12 @@
             <input id="select-btn" type="submit" value="Select">
             </form>
           </td>
+          <td>
+            <form action="/archive_class" method="post">
+            <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
+            <input id="select-btn" type="submit" value="Archive">
+            </form>
+          </td>
         </tr>
       {% endfor %}
       </tbody>
@@ -63,16 +70,20 @@
 {% endif %}
 
 {% if archived %}
+
+<h2>Archived Classes</h2>
 <form action="/student_list" method="post">
 <select name="class_id" id="archived">
-  <option value="" selected disabled hidden>Archived classes</option>
+  <option value="" selected disabled hidden>Select one</option>
   {% for class in archived %}
-  <option value="{{ class['class_id'] }}">{{ class['class_type'] }} | {{ class['time_slot'] }} | {{ class['time_slot'] }} | {{ class['location'] }} | {{ class['year'] }}
+  <option value="{{ class['class_id'] }}">{{ class['class_type'] }} | {{ class['time_slot'] }} | {{ class['location'] }} | {{ class['year'] }}
   </option>
   {% endfor %}
 </select>
 <input id="select-btn" type="submit" value="Select">
+<input id="select-btn" type="submit" value="Unarchive">
 </form>
+
 {% endif %}
 
 </main>
