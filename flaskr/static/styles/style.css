@@ -24,8 +24,7 @@ body {
   background-color: var(--bcg-clr);
   color: #212121;
   font-family: "Rubik";
-  height: 100dvh;
-  width: 100dvw;
+  height: 100vh;
 }
 
 /* --- Header Styling ---*/
@@ -73,14 +72,91 @@ input[type="submit"]:hover {
   background-color: var(--hover-clr);
 }
 
+
+/* --- Login Page Styling ---*/
+.login-main {
+  overflow: hidden;
+  border: none;
+  height: 100%;
+  width: 100%;
+  background-image: url("../img/test.jpg");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 200px auto;
+  height: 50%;
+  max-width: 20%;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  height: 100%;
+}
+
+.inputs {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #007bff; 
+}
+
+/* Error Message Styling */
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+.error-message.active {
+  display: block;
+}
+
+#login-btn {
+  border-radius: 0px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.form-img {
+  height: 100px;
+}
+
 /* --- Main Page Styling ---*/
 main {
   border: 2px solid var(--border-clr);
   border-radius: 4px;
   padding: 1rem;
   margin: 0px auto;
-  max-width: 80%;
-  height: 80%;
   text-align: center;
 }
 
