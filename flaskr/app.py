@@ -60,7 +60,7 @@ def fetch_students(class_id, page):
         students = [dict(row) for row in results]
 
         # Pagination
-        per_page = 12
+        per_page = 8
         start = (page - 1) * per_page
         end = start + per_page
         total_pages = (len(students) + per_page - 1) // per_page
@@ -171,8 +171,7 @@ def student_list():
         class_id = request.form.get("class_id")
 
         if not class_id:
-            # TODO Error message
-            print("ERROR - NO CLASS ID!")
+            return redirect("/homepage")
 
         if "action" in request.form and request.form.get("action") == "Select":
             return select_class(class_id)
@@ -206,30 +205,23 @@ def advance():
         )
 
 
-@app.route("/list")
+@app.route("/list", methods=["GET", "POST"])
 def list():
-    class_id = request.args.get("class_id")
+    print("HELLOOOOOOO")
+    if request.method == "POST":
+        class_id = request.form.get("class_id")
+        print("CLASS ID IS HERE --> ", class_id)
+    else:
+        class_id = request.args.get("class_id")
 
     if not class_id:
         # TODO Error message
         print("ERROR - NO CLASS ID!")
 
     con, cur = connect_to_db()
-
     try:
-        query = """SELECT * FROM student WHERE class_id = (?);"""
-        cur.execute(query, (class_id,))
-        results = cur.fetchall()
-        students = [dict(row) for row in results]
-
-        # Pagination
         page = request.args.get("page", 1, type=int)
-        per_page = 12
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(students) + per_page - 1) // per_page
-        students_per_page = students[start:end]
-
+        students, students_per_page, total_pages = fetch_students(class_id, page)
         return render_template(
             "course_class/student-list.html",
             students=students,

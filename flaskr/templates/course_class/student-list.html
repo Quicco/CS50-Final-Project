@@ -10,7 +10,7 @@
 <!--Go back to the homepage-->
 {% block return %}
   {% if promotion_view %}
-  <form action="/student_list" method="post">
+  <form action="/list" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
     <input class="back-btn" type="submit" value="Go back">
   </form>
@@ -21,19 +21,11 @@
   {% endif %}
 {% endblock %}
 
-<main class="container">
+<main class="container-fluid">
 <h1>Students List</h1>
 
 
 <ul class="container">
-  {% if students|length < 24 %}
-  <form action="/add_student" method="post">
-    <input name="class_id" type="hidden" value="{{ class_id }}" />
-    <input name="page" type="hidden" value="{{ page }}" />
-    <button class="add-btn">Add</button>
-  </form>
-  {% endif %}
-
   {% if students_per_page %}
   <div class="options">
     <div class="pagination">
@@ -46,35 +38,44 @@
       {% endif %}
       </div>
 
-      <!-- Promotion Button-->
+      <div class="student-options">
+        {% if students|length < 24 %}
+        <form action="/add_student" method="post">
+          <input name="class_id" type="hidden" value="{{ class_id }}" />
+          <input name="page" type="hidden" value="{{ page }}" />
+          <button class="add-btn">Add</button>
+        </form>
+        {% endif %}
+
+        <!-- Promotion Button-->
        {% if promotion_view %}
-      <form action="/advance" method="post">
-        <input name="class_id" type="hidden" value="{{ class_id }}" />
-        <input type="submit"  id="advance-btn" value="Confirm Advancement">
-      </form>
-      {% else %}
-      <form action="/advance" method="post">
-        <input name="class_id" type="hidden" value="{{ class_id }}" />
-        <input type="submit" id="advance-btn" value="Advance to Next Stage">
-      </form>
-      {% endif %}
-      
+       <form action="/advance" method="post">
+         <input name="class_id" type="hidden" value="{{ class_id }}" />
+         <input type="submit"  id="advance-btn" value="Confirm Advancement">
+       </form>
+       {% else %}
+       <form action="/advance" method="post">
+         <input name="class_id" type="hidden" value="{{ class_id }}" />
+         <input type="submit" id="advance-btn" value="Advance to Next Stage">
+       </form>
+       {% endif %}
+      </div>
   </div>
   
-
+  <!--Table containing all students from a specific class-->
   <li>
-    <table class="table table-striped table-hover">
+    <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
           {% if promotion_view %}
           <th></th>
           {% endif %}
-          <th>Name</th>
+          <th class="col-md-2">Name</th>
           <th>Email</th>
-          <th>Phone</th>
+          <th class="col-md-3">Phone</th>
           <th>Location</th>
-          <th>Course</th>
-          <th>Class Type</th>
+          <th class="col-md-2">Course</th>
+          <th class="col-md-3">Class Type</th>
           <th></th>
           <th></th>
         </tr>

@@ -75,12 +75,13 @@ input[type="submit"]:hover {
 
 /* --- Main Page Styling ---*/
 main {
-  border: 1px solid var(--border-clr);
+  border: 2px solid var(--border-clr);
   border-radius: 4px;
-  padding: 4rem;
-  margin: 20px auto;
+  padding: 1rem;
+  margin: 0px auto;
   max-width: 80%;
   height: 80%;
+  text-align: center;
 }
 
 ul {
@@ -88,36 +89,32 @@ ul {
 }
 
 /* --- Table styling --- */
-#table {
-  overflow-x:auto;
-  overflow-y: auto;
+table {
+  margin-top: 1rem;
 }
 
 th:first-child {
-  border-top-left-radius: 10px; 
+  border-top-left-radius: 20px; 
 }
 th:last-child {
-  border-top-right-radius: 10px; 
+  border-top-right-radius: 20px; 
 }
 
 thead {
   background-color: var(--border-clr);
-  border-radius: 10px;
+  border-top: none;
   font-size: 1.25rem;
   color: #000;
   text-align: center;
-  vertical-align: center;
   width: 100%;
 }
 
-tr {
-  font-weight: 500;
+td, th {
+  word-wrap: break-word;
 }
 
-.table-text {
-  text-align: center;
-  padding: 2rem;
-  margin: 50px;
+tr {
+  font-weight: 400;
 }
 
 #select-btn {
@@ -125,8 +122,7 @@ tr {
 }
 /* --- Students List Page --- */
 .back-btn {
-  margin-top: 2rem;
-  margin-left: 10rem;
+ margin: 2rem;
 }
 
 .add-btn {
@@ -148,7 +144,11 @@ tr {
 .options {
   display: flex;
   justify-content: space-between;
-  margin-bottom: .25rem;
+}
+
+.student-options {
+  display: flex;
+  gap: 1rem;
 }
 
 .pagination {
