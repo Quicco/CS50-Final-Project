@@ -1,14 +1,35 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block body %}
 
-{% block body %}
-
-
-<form action="/login" method="post">
-  <h3 class="login-header">Welcome</h3> 
-  <input type="text" autofocus autocomplete="off" name="email" placeholder="Email" required>
-  {{ error }}
-  <input type="password" autofocus autocomplete="off" name="password" placeholder="Password" required>
-  <button type="submit">Login</button>
-</form>
-
+<main class="login-main">
+  <div class="form-container">
+    <h3 class="login-header">Log In</h3>
+    <div class="form-content">
+      <form action="/login" method="post">
+        <div class="inputs">
+        <input
+          class="login-input"
+          type="text"
+          autofocus
+          autocomplete="off"
+          name="email"
+          placeholder="Email"
+          required
+        />
+        <input
+          class="login-input"
+          type="password"
+          autofocus
+          autocomplete="off"
+          name="password"
+          placeholder="Password"
+          required
+        />
+      </div>
+        <p class="error-message ">{{ error }}</p>
+        <input id="login-btn" type="submit" value="Login" />
+      </form>
+    </div>
+    <img class="form-img" src="{{ url_for('static', filename='img/GVU.png') }}" alt="GVU Logo">
+  </div>
+</main>
 {% endblock %}

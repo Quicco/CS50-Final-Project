@@ -24,7 +24,7 @@
 <main class="container-fluid">
 <h1>Students List</h1>
 
-
+<!-- Pagination buttons -->
 <ul class="container">
   {% if students_per_page %}
   <div class="options">
@@ -47,7 +47,7 @@
         </form>
         {% endif %}
 
-        <!-- Promotion Button-->
+        <!-- Promotion button-->
        {% if promotion_view %}
        <form action="/advance" method="post">
          <input name="class_id" type="hidden" value="{{ class_id }}" />
