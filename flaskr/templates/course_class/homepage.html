@@ -1,21 +1,20 @@
-{% extends "layout.html" %}
-
-{% block body %}
-
-{% block header %}
+{% extends "layout.html" %} {% block body %} {% block header %}
 <header class="container-fluid">
   <div>
     <a class="logo-container" href="{{ url_for('homepage') }}">
-      <img class="logo" src="{{ url_for('static', filename='img/GVU.png') }}" alt="Green valley university logo">
+      <img
+        class="logo"
+        src="{{ url_for('static', filename='img/GVU.png') }}"
+        alt="Green valley university logo"
+      />
       <h4 class="gvu"><span class="green-text">Green</span>ValleyUniversity</h4>
     </a>
   </div>
 
- 
   <nav>
     {% if loggedin %}
     <form action="/logout">
-      <input type="submit" value="Logout">
+      <input type="submit" value="Logout" />
     </form>
     {% endif %}
   </nav>
@@ -23,69 +22,99 @@
 
 {% endblock %}
 <main class="container-fluid">
-
-{% if classes %}
-<h2>Ongoing classes</h2>
-<ul class="container">
-  <li>
-    <table class="table-responsive table table-striped table-hover">
-      <thead >
-        <tr>
-          <th>Course</th>
-          <th>Class Type</th>
-          <th>Time Slot</th>
-          <th>Location</th>
-          <th>Year</th>
-          <th></th>
-          <th></th>
+  {% if classes %}
+  <h2>Ongoing classes</h2>
+  <ul class="container">
+    <li>
+      <table class="table-responsive table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Class Type</th>
+            <th>Time Slot</th>
+            <th>Location</th>
+            <th>Year</th>
+            <th></th>
+            <th></th>
           </tr>
-          </thead>
-          <tbody>
-        {% for class in classes %}
-        <tr>
-          <td>{{ class['course'] }}</td>
-          <td>{{ class['class_type'] }}</td>
-          <td>{{ class['time_slot'] }}</td>
-          <td>{{ class['location'] }}</td>
-          <td>{{ class['year'] }}</td>
-          <td>
-            <form action="/actions" method="post">
-            <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
-            <input name="action" id="select-btn" type="submit" value="Select">
-            </form>
-          </td>
-          <td>
-            <form action="/actions" method="post">
-            <input name="class_id" type="hidden" value="{{ class['class_id'] }}">
-            <input name="action" onclick="return confirmArchive()"  id="select-btn" type="submit" value="Archive">
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </li>
-</ul>
+        </thead>
+        <tbody>
+          {% for class in classes %}
+          <tr>
+            <td>{{ class['course'] }}</td>
+            <td>{{ class['class_type'] }}</td>
+            <td>{{ class['time_slot'] }}</td>
+            <td>{{ class['location'] }}</td>
+            <td>{{ class['year'] }}</td>
+            <td>
+              <form action="/actions" method="post">
+                <input
+                  name="class_id"
+                  type="hidden"
+                  value="{{ class['class_id'] }}"
+                />
+                <input
+                  name="action"
+                  id="select-btn"
+                  type="submit"
+                  value="Select"
+                />
+              </form>
+            </td>
+            <td>
+              <form action="/actions" method="post">
+                <input
+                  name="class_id"
+                  type="hidden"
+                  value="{{ class['class_id'] }}"
+                />
+                <span class="material-symbols-outlined"
+                  ><input
+                    name="action"
+                    onclick="return confirmArchive()"
+                    id="select-btn"
+                    type="submit"
+                    value="Archive"
+                /></span>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </li>
+  </ul>
 
-{% endif %}
+  {% endif %} {% if archived %}
 
-{% if archived %}
+  <h2>Archived Classes</h2>
+  <div class="test">
+    <div class="form-wrapper">
+    <form action="/actions" method="post">
+      <select name="class_id" id="archived">
+        <option value="" selected disabled hidden>Select one</option>
+        {% for class in archived %}
+        <option value="{{ class['class_id'] }}">
+          {{ class['class_type'] }} | {{ class['time_slot'] }} | {{
+          class['location'] }} | {{ class['year'] }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+      <div class="button-container">
+        <input name="action" id="select-btn" type="submit" value="Select" />
+        <span class="material-symbols-outlined">
+          <input
+            name="action"
+            id="select-btn"
+            type="submit"
+            value="Unarchive"
+          />
+        </span>
+      </div>
+    </form>
+  </div>
 
-<h2>Archived Classes</h2>
-<form action="/actions" method="post">
-<select name="class_id" id="archived">
-  <option value="" selected disabled hidden>Select one</option>
-  {% for class in archived %}
-  <option value="{{ class['class_id'] }}">{{ class['class_type'] }} | {{ class['time_slot'] }} | {{ class['location'] }} | {{ class['year'] }}
-  </option>
-  {% endfor %}
-</select>
-<input name="action" id="select-btn" type="submit" value="Select">
-<input name="action" id="select-btn" type="submit" value="Unarchive">
-
-</form>
-
-{% endif %}
-
+  {% endif %}
 </main>
 {% endblock %}

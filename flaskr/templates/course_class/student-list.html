@@ -7,8 +7,11 @@
 {% endblock %}
 
 
+<main class="container-fluid">
+<h1>Students List</h1>
+
 <!--Go back to the homepage-->
-{% block return %}
+<!-- {% block return %}
   {% if promotion_view %}
   <form action="/list" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
@@ -19,10 +22,7 @@
   <input class="back-btn" type="submit" value="Go back">
 </form>
   {% endif %}
-{% endblock %}
-
-<main class="container-fluid">
-<h1>Students List</h1>
+{% endblock %} -->
 
 <!-- Pagination buttons -->
 <ul class="container">
@@ -104,7 +104,9 @@
                 type="hidden"
                 value="{{ student['class_id'] }}"
               />
-              <input id="edit-btn" type="submit" value="Edit">
+              <span class="material-symbols-outlined">
+                <input id="edit-btn" type="submit" value="Edit" name="Edit">
+                </span>
             </form>
           </td>
           <td>
@@ -115,7 +117,9 @@
                 value="{{ student['student_id'] }}"
               />
               <input name="class_id" type="hidden" value="{{ class_id }}" />
-              <input id="delete-btn" type="submit" value="Delete">
+              <span class="material-symbols-outlined">
+                <input id="delete-btn" type="submit" value="Delete">
+                </span>
             </form>
           </td>
         </tr>
