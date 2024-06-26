@@ -114,26 +114,7 @@ def unarchive_class(class_id):
         con.close()
 
 
-#  Login Related Routes
-### TEST ENVIRONMENT ###
-# @app.route("/")
-# def test_env():
-#     return render_template("test_env/index.html")
-
-
-# @app.route("/test", methods=["GET", "POST"])
-# def test():
-#     action = request.form.get("action")
-#     if action == "test1":
-#         return render_template("test_env/table1.html")
-#     elif action == "test2":
-#         names = request.form.getlist("person")
-#         return render_template("test_env/table2.html", con=True, names=names)
-
-
-##########################################
-
-
+# Route functions
 @app.route("/")
 def index():
     return render_template("index/login-form.html")
@@ -318,6 +299,37 @@ def list():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+        )
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
+@app.route("/advance_list", methods=["GET", "POST"])
+def advance_list():
+    if request.method == "POST":
+        class_id = request.form.get("class_id")
+    else:
+        class_id = request.args.get("class_id")
+
+    if not class_id:
+        # TODO Error message
+        print("ERROR - NO CLASS ID!")
+
+    con, cur = connect_to_db()
+    try:
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+        return render_template(
+            "student/advance-view.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+            promotion_view=True,
         )
 
     except sqlite3.Error as e:
