@@ -115,6 +115,22 @@ def unarchive_class(class_id):
 
 
 #  Login Related Routes
+### TEST ENVIRONMENT ###
+# @app.route("/")
+# def test_env():
+#     return render_template("test_env/index.html")
+
+
+# @app.route("/test", methods=["GET", "POST"])
+# def test():
+#     action = request.form.get("action")
+#     if action == "test1":
+#         return render_template("test_env/table1.html")
+#     elif action == "test2":
+#         return render_template("test_env/table2.html", con=False)
+##########################################
+
+
 @app.route("/")
 def index():
     return render_template("index/login-form.html")
@@ -199,7 +215,7 @@ def advance():
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
         return render_template(
-            "student/student-list.html",
+            "student/advance-view.html",
             students=students,
             class_id=class_id,
             students_per_page=students_per_page,

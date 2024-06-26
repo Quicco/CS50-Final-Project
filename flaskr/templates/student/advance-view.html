@@ -1,4 +1,4 @@
-{% extends "homepage/homepage.html" %} 
+{% extends "student/student-list.html" %} 
 
 {% block body %}
 
@@ -8,7 +8,7 @@
 
 
 <main class="container-fluid">
-<h1>Students List</h1>
+<h1>Advance Students</h1>
 
 <!--Go back to the homepage-->
 <!-- {% block return %}
@@ -47,68 +47,38 @@
         </form>
         {% endif %}
 
-
-       <form action="/advance" method="post">
+        <!-- Promotion button-->
+       <form action="/confirm_advance" method="post">
          <input name="class_id" type="hidden" value="{{ class_id }}" />
-         <input type="submit" id="advance-btn" value="Advance to Next Stage">
-       </form>
+         <input type="submit"  id="advance-btn" value="Confirm Advancement">
       </div>
   </div>
   
+{% if promotion_view %}
   <!--Table containing all students from a specific class-->
   <li>
     <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
+          <th></th>
           <th class="col-md-2">Name</th>
           <th>Email</th>
           <th class="col-md-3">Phone</th>
           <th>Location</th>
           <th class="col-md-2">Course</th>
           <th class="col-md-3">Class Type</th>
-          <th></th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
         {% for student in students_per_page %}
         <tr>
+          <td><input type="checkbox" name="check" id="check"></td>
           <td>{{ student['name'] }}</td>
           <td>{{ student['email'] }}</td>
           <td>{{ student['phone'] }}</td>
           <td>{{ student['location'] }}</td>
           <td>{{ student['course'] }}</td>
           <td>{{ student['class_type'] }}</td>
-          <td>
-            <form action="/edit_student" method="post">
-              <input
-                name="student_id"
-                type="hidden"
-                value="{{ student['student_id'] }}"
-              />
-              <input
-                name="class_id"
-                type="hidden"
-                value="{{ student['class_id'] }}"
-              />
-              <span class="material-symbols-outlined">
-                <input id="edit-btn" type="submit" value="Edit" name="Edit">
-                </span>
-            </form>
-          </td>
-          <td>
-            <form action="/delete_student" method="post" onsubmit="return confirmDeletion()">
-              <input
-                name="student_id"
-                type="hidden"
-                value="{{ student['student_id'] }}"
-              />
-              <input name="class_id" type="hidden" value="{{ class_id }}" />
-              <span class="material-symbols-outlined">
-                <input id="delete-btn" type="submit" value="Delete">
-                </span>
-            </form>
-          </td>
         </tr>
         {% endfor %}
         
@@ -116,7 +86,9 @@
         <h5>There are currently no students in this class.</h5>
       </tbody>
     </table>
+  </form>
   </li>
+  {% endif %}
   {% endif %}
 </ul>
 

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEST</title>
+</head>
+<body>
+  {% block body %}
+
+  <form action="/test" method="post">
+    <input type="hidden" name="action" value="test1">
+    <input type="submit" value="Test!">
+  </form>
+  {% endblock %}
+</body>
+</html>
