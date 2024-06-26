@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, url_for
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
@@ -50,7 +50,7 @@ def fetch_students(class_id, page):
     try:
         con, cur = connect_to_db()
 
-        query = """SELECT * FROM student WHERE class_id = (?);"""
+        query = """SELECT * FROM student WHERE class_id = (?) ORDER BY name ASC;"""
         cur.execute(query, (class_id,))
         results = cur.fetchall()
         students = [dict(row) for row in results]
@@ -127,7 +127,10 @@ def unarchive_class(class_id):
 #     if action == "test1":
 #         return render_template("test_env/table1.html")
 #     elif action == "test2":
-#         return render_template("test_env/table2.html", con=False)
+#         names = request.form.getlist("person")
+#         return render_template("test_env/table2.html", con=True, names=names)
+
+
 ##########################################
 
 
@@ -227,17 +230,70 @@ def advance():
 
 @app.route("/confirm_advance", methods=["GET", "POST"])
 def confirm_advance():
-
     if request.method == "POST":
-        student_ids = request.form.getlist("checked")
-        if not student_ids:
-            print("NO IDS WHAAAT?")
+        class_id = request.form.get("class_id")
+        students_ids = request.form.getlist("checked")
+        ids = [int(id) for id in students_ids]  # Convert student IDs to integers
+
+        if not students_ids:
             return "NO CHECKED STUDENTS"
 
-        else:
-            print("LIST OF STUDENT IDS HERE --> ", student_ids)
+        try:
+            con, cur = connect_to_db()
 
-        return "LOL"
+            # Fetch the existing class details
+            cur.execute("SELECT * FROM class WHERE class_id = ?", (class_id,))
+            row = cur.fetchone()
+
+            if row is None:
+                return "CLASS NOT FOUND"
+
+            course, location, year = (
+                row[1],
+                row[4],
+                row[5],
+            )
+
+            # Check for an existing class
+            cur.execute(
+                """
+                SELECT class_id FROM class 
+                WHERE course = ? AND class_type = ? AND location = ? AND year = ?
+                """,
+                (course, "Advanced", location, year),
+            )
+            existing_class = cur.fetchone()
+
+            if existing_class:
+                new_class_id = existing_class[0]
+            else:
+                # Create a new advanced class
+                cur.execute(
+                    """
+                    INSERT INTO class (course, class_type, time_slot, location, year, archived) 
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (course, "Advanced", "All Day", location, year, 0),
+                )
+                con.commit()
+                new_class_id = cur.lastrowid
+
+            # Insert student into the new class
+            for id in ids:
+                cur.execute(
+                    "UPDATE student SET class_id = ?, class_type = ? WHERE student_id = ?",
+                    (new_class_id, "Advanced", id),
+                )
+
+            con.commit()
+
+            return redirect(url_for("homepage"))
+
+        except sqlite3.Error as e:
+            return f"Database error: {e}"
+
+        finally:
+            con.close()
 
 
 @app.route("/list", methods=["GET", "POST"])
@@ -336,7 +392,7 @@ def confirm_edit():
                 "upd_class_type": request.form.get("class_type"),
             }
 
-            con, cur = connect_to_db()
+            cur, con = connect_to_db()
 
             cur.execute(
                 """UPDATE student SET name = (?), email = (?), phone = (?) WHERE student_id = (?)""",

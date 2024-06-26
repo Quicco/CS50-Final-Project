@@ -8,6 +8,8 @@
 
 
 <main class="container-fluid">
+{% if promotion_view %}
+
 <h1>Advance Students</h1>
 
 <!--Go back to the homepage-->
@@ -54,44 +56,45 @@
       </div>
   </div>
   
-{% if promotion_view %}
-  <!--Table containing all students from a specific class-->
-  <li>
-    <table class="table-responsive table table-striped table-hover">
-      <thead>
-        <tr>
-          <th></th>
-          <th class="col-md-2">Name</th>
-          <th>Email</th>
-          <th class="col-md-3">Phone</th>
-          <th>Location</th>
-          <th class="col-md-2">Course</th>
-          <th class="col-md-3">Class Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in students_per_page %}
-        <tr>
-          <td><input type="checkbox" name="check" id="check"></td>
-          <td>{{ student['name'] }}</td>
-          <td>{{ student['email'] }}</td>
-          <td>{{ student['phone'] }}</td>
-          <td>{{ student['location'] }}</td>
-          <td>{{ student['course'] }}</td>
-          <td>{{ student['class_type'] }}</td>
-        </tr>
-        {% endfor %}
-        
-        {% else %}
-        <h5>There are currently no students in this class.</h5>
-      </tbody>
-    </table>
+
+  <form action="/confirm_advance" method="post">
+    <!--Table containing all students from a specific class-->
+    <li>
+      <table class="table-responsive table table-striped table-hover">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-md-2">Name</th>
+            <th>Email</th>
+            <th class="col-md-3">Phone</th>
+            <th>Location</th>
+            <th class="col-md-2">Course</th>
+            <th class="col-md-3">Class Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students_per_page %}
+          <tr>
+            <td><input type="checkbox" name="checked" id="check" value="{{ student['student_id'] }}"></td>
+            <td>{{ student['name'] }}</td>
+            <td>{{ student['email'] }}</td>
+            <td>{{ student['phone'] }}</td>
+            <td>{{ student['location'] }}</td>
+            <td>{{ student['course'] }}</td>
+            <td>{{ student['class_type'] }}</td>
+          </tr>
+          {% endfor %}
+          
+          {% else %}
+          <h5>There are currently no students in this class.</h5>
+        </tbody>
+      </table>
+    </form>
+    </li>
   </form>
-  </li>
-  {% endif %}
   {% endif %}
 </ul>
-
+{% endif %}
 </main>
 
 {% endblock %}

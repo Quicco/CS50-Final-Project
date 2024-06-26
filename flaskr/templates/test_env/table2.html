@@ -2,7 +2,9 @@
 
 {% block body %}
   {% if con %}
-  <h1>IS THIS IT??? THE SECRET SAUCE?</h1>
+    {% for name in names %}
+    <p>{{ name }}</p>
+    {% endfor %}
   {% else %}
   <h4>APPARENTLY NOT</h4>
   {% endif %}
