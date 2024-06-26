@@ -75,7 +75,7 @@ def select_class(class_id):
     students, students_per_page, total_pages = fetch_students(class_id, page)
 
     return render_template(
-        "course_class/student-list.html",
+        "student/student-list.html",
         students=students,
         class_id=class_id,
         students_per_page=students_per_page,
@@ -93,7 +93,7 @@ def archive_class(class_id):
 
         classes, archived = fetch_classes()
         return render_template(
-            "course_class/homepage.html", classes=classes, archived=archived
+            "homepage/homepage.html", classes=classes, archived=archived
         )
     finally:
         con.close()
@@ -108,7 +108,7 @@ def unarchive_class(class_id):
 
         classes, archived = fetch_classes()
         return render_template(
-            "course_class/homepage.html", classes=classes, archived=archived
+            "homepage/homepage.html", classes=classes, archived=archived
         )
     finally:
         con.close()
@@ -117,7 +117,7 @@ def unarchive_class(class_id):
 #  Login Related Routes
 @app.route("/")
 def index():
-    return render_template("login-form.html", test=True)
+    return render_template("index/login-form.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -132,7 +132,7 @@ def login():
 
         if not email or not pw:
             error = "Please fill in your email and password."
-            return render_template("login.html", error=error)
+            return render_template("index/login-form.html", error=error)
 
         con, cur = connect_to_db()
 
@@ -144,7 +144,7 @@ def login():
                 if results and ph.verify(results["password"], pw):
                     classes, archived = fetch_classes()
                     return render_template(
-                        "course_class/homepage.html",
+                        "homepage/homepage.html",
                         classes=classes,
                         loggedin=True,
                         archived=archived,
@@ -199,7 +199,7 @@ def advance():
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
         return render_template(
-            "course_class/student-list.html",
+            "student/student-list.html",
             students=students,
             class_id=class_id,
             students_per_page=students_per_page,
@@ -240,7 +240,7 @@ def list():
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
         return render_template(
-            "course_class/student-list.html",
+            "student/student-list.html",
             students=students,
             class_id=class_id,
             students_per_page=students_per_page,
@@ -262,7 +262,7 @@ def edit_student():
 
         if not student_id:
             error = "Sorry, an error has occurred."
-            return render_template("course_class/homepage", error=error)
+            return render_template("homepage/homepage.html", error=error)
 
         con, cur = connect_to_db()
 
@@ -337,7 +337,7 @@ def confirm_edit():
 
             msg = "You have sucsessfully edited a student."
             return render_template(
-                "user_feedback/confirm-edit.html",
+                "feedback_msg/confirm-edit.html",
                 msg=msg,
                 class_id=upd_student["class_id"],
             )
@@ -411,7 +411,7 @@ def confirm_add():
 
             msg = "Student has sucessfully been added."
             return render_template(
-                "user_feedback/confirm-add.html",
+                "feedback_msg/confirm-add.html",
                 class_id=new_student["class_id"],
                 msg=msg,
             )
@@ -438,7 +438,7 @@ def delete_student():
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
         return render_template(
-            "course_class/student-list.html",
+            "student/student-list.html",
             students=students,
             class_id=class_id,
             students_per_page=students_per_page,
@@ -453,7 +453,7 @@ def homepage():
     classes, archived = fetch_classes()
     if classes:
         return render_template(
-            "course_class/homepage.html",
+            "homepage/homepage.html",
             classes=classes,
             archived=archived,
             loggedin=True,
