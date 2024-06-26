@@ -29,10 +29,12 @@ body {
 
 /* --- Header Styling ---*/
 header {
+  background-color: #272727;
   height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0px 0px 8px rgba(0,0,0,.6);
 }
 
 .logo-container {
@@ -40,24 +42,28 @@ header {
   font-family: var(--logo-ff);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 .logo-container:hover {
   text-decoration: none;
 }
 
 .logo {
-  height: 80px;
-  width: 80px;
+  height: 65px;
+  width: 65px;
 }
 
-.green-text {
-  color: var(--main-clr);
+.uni-name{
+  font-size: 1.15rem;
+  display: block;
 }
 
 .gvu {
+  font-size: 1rem;
+  text-align: center;
   text-decoration: none;
-  color: var(--secondary-clr);
+  text-transform: uppercase;
+  color: var(--bcg-clr)
 }
 
 input[type="submit"] {
@@ -210,12 +216,12 @@ tr {
   padding: .25rem .5rem;
 }
 /* --- Students List Page --- */
-/* .back-btn {
+.back-btn {
   position: absolute;
-  top: 10%;
-  left: 10%;
+  top: 9.7%; /* Disgusting */
+  left: 22%;
   margin: 2rem;
-} */
+}
 
 .add-btn {
   border: none;
@@ -228,10 +234,6 @@ tr {
   cursor: pointer;
   background-color: var(--main-hover-clr);
 }
-
-/* #delete-btn {
-  background-color: rgb(201, 2, 2);
-} */
 
 .options {
   display: flex;
@@ -257,4 +259,10 @@ tr {
   border: 1px solid var(--border-clr);
   border-radius: 0px;
   color: var(--color);
+}
+
+/* Checkboxes after you click on advance */
+input[type="checkbox"] {
+  scale: 1.4;
+  cursor: pointer;
 }

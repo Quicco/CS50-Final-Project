@@ -117,7 +117,7 @@ def unarchive_class(class_id):
 #  Login Related Routes
 @app.route("/")
 def index():
-    return render_template("login-form.html")
+    return render_template("login-form.html", test=True)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -209,6 +209,21 @@ def advance():
         )
 
 
+@app.route("/confirm_advance", methods=["GET", "POST"])
+def confirm_advance():
+
+    if request.method == "POST":
+        student_ids = request.form.getlist("checked")
+        if not student_ids:
+            print("NO IDS WHAAAT?")
+            return "NO CHECKED STUDENTS"
+
+        else:
+            print("LIST OF STUDENT IDS HERE --> ", student_ids)
+
+        return "LOL"
+
+
 @app.route("/list", methods=["GET", "POST"])
 def list():
     if request.method == "POST":
@@ -275,9 +290,6 @@ def edit_student():
 @app.route("/confirm_edit", methods=["GET", "POST"])
 def confirm_edit():
     if request.method == "POST":
-
-        print(request.form)
-
         # If it's not a valid phone number, keep old info but reset the phone field
         if not validate_phone_num(request.form.get("phone")):
             unedited_student = {
@@ -311,13 +323,13 @@ def confirm_edit():
             con, cur = connect_to_db()
 
             cur.execute(
-                """UPDATE student SET name = (?), email = (?), phone = (?), location = (?), class_type = (?) WHERE student_id = (?)""",
+                """UPDATE student SET name = (?), email = (?), phone = (?) WHERE student_id = (?)""",
                 (
                     upd_student["upd_name"],
                     upd_student["upd_email"],
                     upd_student["upd_phone"],
-                    upd_student["upd_location"],
-                    upd_student["upd_class_type"],
+                    # upd_student["upd_location"],
+                    # upd_student["upd_class_type"],
                     upd_student["student_id"],
                 ),
             )
@@ -433,11 +445,6 @@ def delete_student():
             total_pages=total_pages,
             page=page,
         )
-
-
-@app.route("/promote", methods=["GET", "POST"])
-def promote():
-    return
 
 
 #  Navigation Related Routes

@@ -1,5 +1,4 @@
-import phonenumbers
-import re
+import phonenumbers, re
 from phonenumbers import NumberParseException
 
 # Constants
