@@ -6,12 +6,16 @@
 <form action="/confirm_add" method="post">
   <input type="hidden" name="class_id" value="{{ class_id }}">
   <input type="hidden" name="page" value="{{ page }}">
+
   <label for="name">Name</label>
-  <input id="name" name="name" type="text" required>
+  <input id="name" name="name" type="text" required autocomplete="off">
+
   <label for="email">Email</label>
-  <input id="email" name="email" type="text" required>
+  <input id="email" name="email" type="text" required autocomplete="off">
+
   <label for="phone">Phone</label>
-  <input id="phone" name="phone" type="text" required>
+  <input id="phone" name="phone" type="text" required autocomplete="off">
+
   <label for="location">Location</label>
   <select name="location" id="location">
     {% for location in locations %}

@@ -8,19 +8,19 @@
 <button onclick="goBack()">&#8592</button>
 {% endblock %}
 
-<form action="/confirm_edit" method="post">
+<form action="/confirm_edit" autocomplete="off" method="post">
   <input type="hidden" name="action" value="">
   <input name="class_id" type="hidden" value="{{ student['class_id'] }}" />
   <input name="student_id" type="hidden" value="{{ student['student_id'] }}" />
 
   <label for="name">Name</label>
-  <input id="name" name="name" type="text" value="{{ student['name'] }}" />
+  <input id="name" name="name" type="text" value="{{ student['name'] }}"  autocomplete="off"/>
 
   <label for="email">Email</label>
-  <input id="email" name="email" type="text" value="{{ student['email'] }}" />
+  <input id="email" name="email" type="text" value="{{ student['email'] }}" autocomplete="off"/>
 
   <label for="phone">Phone</label>
-  <input id="phone" name="phone" type="text" value="{{ student['phone'] }}" />
+  <input id="phone" name="phone" type="text" value="{{ student['phone'] }}" autocomplete="off"/>
 
   <!-- <label for="location">Location</label>
   <select name="location" id="location">

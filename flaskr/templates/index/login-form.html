@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block body %}
 
+
+{% block header %}
+  {{ super() }}
+{% endblock %}
+
 <main class="login-main">
   <div class="form-container">
     <h3 class="login-header">Log In</h3>
@@ -29,7 +34,6 @@
         <input id="login-btn" type="submit" value="Login" />
       </form>
     </div>
-    <img class="form-img" src="{{ url_for('static', filename='img/GVU2.png') }}" alt="GVU Logo">
   </div>
 </main>
 {% endblock %}

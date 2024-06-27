@@ -24,7 +24,8 @@ body {
   background-color: var(--bcg-clr);
   color: #212121;
   font-family: "Rubik";
-  height: 100vh;
+  height: 100dvh;
+  overflow-y: hidden;
 }
 
 /* --- Header Styling ---*/
@@ -157,17 +158,21 @@ input[type="submit"]:hover {
   height: 100px;
 }
 
-/* --- Main Page Styling ---*/
+/* --- Homepage Styling ---*/
 main {
   border: 2px solid var(--border-clr);
   border-radius: 4px;
   padding: 1rem;
-  margin: 0px auto;
+  margin: 1rem auto;
   text-align: center;
 }
 
 ul {
   list-style: none;
+}
+
+.archived-classes {
+  margin-top: 5rem;
 }
 
 .archive {
@@ -178,20 +183,39 @@ ul {
   gap: 1rem;
 }
 
+.dropdown {
+  cursor: pointer;
+  padding: .25rem .5rem;
+  border: 1px solid var(--border-clr);
+  background-color: var(--bcg-clr);
+  font-size: 1.15rem;
+}
+.dropdown:focus {
+  border: 1px solid black;
+}
+
+.dropdown > option {
+  padding: .25rem .5rem;
+  text-align: left;
+}
+
 .button-container {
   display: flex;
   gap: .5rem;
 }
 
-/* --- Table styling --- */
+/* --- Students List Page --- */
+/* Table styling */
 table {
   margin-top: 1rem;
 }
 
 th:first-child {
+  border-top: 0px;
   border-top-left-radius: 20px; 
 }
 th:last-child {
+  border-top: 0px;
   border-top-right-radius: 20px; 
 }
 
@@ -215,7 +239,7 @@ tr {
 #select-btn {
   padding: .25rem .5rem;
 }
-/* --- Students List Page --- */
+
 .back-btn {
   position: absolute;
   top: 9.7%; /* Disgusting */

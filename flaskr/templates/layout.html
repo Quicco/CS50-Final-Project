@@ -51,11 +51,33 @@
   </head>
 
   <body>
-    {% if test %} 
-      {% block table %} {% endblock %} 
-    {% else %} 
-     {% block body %} {% endblock %} 
-    {% endif %}
+     {% block body %}
+
+     {% block header %}
+     <header class="container-fluid">
+       <div>
+         <a class="logo-container" href="{{ url_for('homepage') }}">
+           <img
+             class="logo"
+             src="{{ url_for('static', filename='img/GVU2.png') }}"
+             alt="Green valley university logo"
+           />
+           <h4 class="gvu"><span class="uni-name">Green Valley</span>University</h4>
+         </a>
+       </div>
+     
+       <nav>
+         {% if loggedin %}
+         <form action="/logout">
+           <input type="submit" value="Logout" />
+         </form>
+         {% endif %}
+       </nav>
+     </header>
+     
+     {% endblock %}
+
+      {% endblock %} 
 
     <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
   </body>

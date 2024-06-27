@@ -93,7 +93,10 @@ def archive_class(class_id):
 
         classes, archived = fetch_classes()
         return render_template(
-            "homepage/homepage.html", classes=classes, archived=archived
+            "homepage/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
         )
     finally:
         con.close()
@@ -108,7 +111,10 @@ def unarchive_class(class_id):
 
         classes, archived = fetch_classes()
         return render_template(
-            "homepage/homepage.html", classes=classes, archived=archived
+            "homepage/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
         )
     finally:
         con.close()
@@ -151,10 +157,10 @@ def login():
                     )
             except VerifyMismatchError:
                 error = "Incorrect password"
-                return render_template("login-form.html", error=error)
+                return render_template("index/login-form.html", error=error)
             else:
                 error = "Incorrect email or password"
-                return render_template("login-form.html", error=error)
+                return render_template("index/login-form.html", error=error)
         except sqlite3.Error as e:
             return f"Database error: {e}"
         finally:
@@ -410,7 +416,7 @@ def confirm_edit():
                 "upd_class_type": request.form.get("class_type"),
             }
 
-            cur, con = connect_to_db()
+            con, cur = connect_to_db()
 
             cur.execute(
                 """UPDATE student SET name = (?), email = (?), phone = (?) WHERE student_id = (?)""",
@@ -541,10 +547,10 @@ def delete_student():
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
     classes, archived = fetch_classes()
-    if classes:
-        return render_template(
-            "homepage/homepage.html",
-            classes=classes,
-            archived=archived,
-            loggedin=True,
-        )
+
+    return render_template(
+        "homepage/homepage.html",
+        classes=classes,
+        archived=archived,
+        loggedin=True,
+    )
