@@ -95,8 +95,8 @@
         <option value="" selected disabled hidden>Select one</option>
         {% for class in archived %}
         <option value="{{ class['class_id'] }}">
-          {{ class['class_type'] }} | {{ class['time_slot'] }} | {{
-          class['location'] }} | {{ class['year'] }}
+          {{ class['class_type'] }} - {{ class['time_slot'] }} | {{
+          class['location'] }} , {{ class['year'] }}
         </option>
         {% endfor %}
       </select>

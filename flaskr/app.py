@@ -214,7 +214,7 @@ def confirm_advance():
     if request.method == "POST":
         class_id = request.form.get("class_id")
         students_ids = request.form.getlist("checked")
-        ids = [int(id) for id in students_ids]  # Convert student IDs to integers
+        ids = [int(id) for id in students_ids]
 
         if not students_ids:
             return "NO CHECKED STUDENTS"
@@ -223,17 +223,23 @@ def confirm_advance():
             con, cur = connect_to_db()
 
             # Fetch the existing class details
-            cur.execute("SELECT * FROM class WHERE class_id = ?", (class_id,))
-            row = cur.fetchone()
+            cur.execute("SELECT * FROM class WHERE class_id = (?)", (class_id,))
+            old_class = cur.fetchone()
 
-            if row is None:
+            if old_class is None:
                 return "CLASS NOT FOUND"
 
             course, location, year = (
-                row[1],
-                row[4],
-                row[5],
+                old_class[1],
+                old_class[4],
+                old_class[5],
             )
+
+            # Archive the old class
+            cur.execute(
+                "UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,)
+            )
+            con.commit()
 
             # Check for an existing class
             cur.execute(
