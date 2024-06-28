@@ -3,6 +3,7 @@
 {% block body %}
 
 <h3>{{ msg }}</h3>
+<h3>ID IS --> {{ class_id }}</h3>
 
 <form action="/list" method="post">
   <input type="hidden" name="class_id" value="{{ class_id }}">

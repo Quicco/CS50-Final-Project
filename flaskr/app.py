@@ -385,6 +385,7 @@ def advance_list():
 def edit_student():
     if request.method == "POST":
         student_id = request.form.get("student_id")
+        class_id = request.form.get("class_id")
 
         if not student_id:
             error = "Sorry, an error has occurred."
@@ -402,6 +403,7 @@ def edit_student():
 
             return render_template(
                 "student/edit-student.html",
+                class_id=class_id,
                 student=student,
                 locations=LOCATIONS,
                 class_types=CLASS_TYPES,
@@ -436,9 +438,10 @@ def confirm_edit():
             )
 
         try:
+            class_id = request.form.get("class_id")
+
             upd_student = {
                 "student_id": request.form.get("student_id"),
-                "class_id": request.form.get("class_id"),
                 "upd_name": request.form.get("name"),
                 "upd_email": request.form.get("email"),
                 "upd_phone": request.form.get("phone"),
@@ -465,7 +468,7 @@ def confirm_edit():
             return render_template(
                 "feedback_msg/confirm-edit.html",
                 msg=msg,
-                class_id=upd_student["class_id"],
+                class_id=class_id,
             )
         finally:
             con.close()
@@ -500,9 +503,9 @@ def confirm_add():
             )
 
         try:
+            class_id = request.form.get("class_id")
 
             new_student = {
-                "class_id": request.form.get("class_id"),
                 "name": request.form.get("name"),
                 "email": request.form.get("email"),
                 "phone": valid_phone,
@@ -522,7 +525,7 @@ def confirm_add():
             con, cur = connect_to_db()
 
             cur.execute(
-                """INSERT into student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? ,?, ?, ? )""",
+                """INSERT into student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? ,?, ?)""",
                 (
                     new_student["name"],
                     new_student["email"],
@@ -530,15 +533,23 @@ def confirm_add():
                     new_student["location"],
                     new_student["course"],
                     new_student["class_type"],
-                    new_student["class_id"],
                 ),
+            )
+            con.commit()
+
+            # Add the new student to the current
+            student_id = cur.lastrowid  # Get the newly inserted student's ID
+
+            cur.execute(
+                "INSERT INTO class_student (class_id, student_id) VALUES (?,?);",
+                (class_id, student_id),
             )
             con.commit()
 
             msg = "Student has sucessfully been added."
             return render_template(
                 "feedback_msg/confirm-add.html",
-                class_id=new_student["class_id"],
+                class_id=class_id,
                 msg=msg,
             )
         finally:
