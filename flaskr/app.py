@@ -34,6 +34,7 @@ def fetch_classes():
         classes = cur.execute(
             "SELECT * FROM class WHERE archived = 0 ORDER BY location;"
         ).fetchall()
+
         archived = cur.execute(
             "SELECT * FROM class WHERE archived = 1 ORDER BY location;"
         ).fetchall()
@@ -50,7 +51,12 @@ def fetch_students(class_id, page):
     try:
         con, cur = connect_to_db()
 
-        query = """SELECT * FROM student WHERE class_id = (?) ORDER BY name ASC;"""
+        query = """SELECT * FROM student WHERE 
+        student_id IN (
+        SELECT student_id 
+        FROM class_student 
+         WHERE class_id = (?)
+        ) ORDER BY name ASC;"""
         cur.execute(query, (class_id,))
         results = cur.fetchall()
         students = [dict(row) for row in results]
@@ -81,6 +87,7 @@ def select_class(class_id):
         students_per_page=students_per_page,
         total_pages=total_pages,
         page=page,
+        loggedin=True,
     )
 
 
@@ -107,6 +114,24 @@ def unarchive_class(class_id):
         con, cur = connect_to_db()
 
         cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?)", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        return render_template(
+            "homepage/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
+        )
+    finally:
+        con.close()
+
+
+def delete_class(class_id):
+    try:
+        con, cur = connect_to_db()
+
+        cur.execute("DELETE FROM class WHERE class_id = (?)", (class_id,))
         con.commit()
 
         classes, archived = fetch_classes()
@@ -187,6 +212,8 @@ def student_list():
             return select_class(class_id)
         elif "action" in request.form and request.form.get("action") == "Archive":
             return archive_class(class_id)
+        elif "action" in request.form and request.form.get("action") == "Delete":
+            return delete_class(class_id)
         else:
             return unarchive_class(class_id)
 
@@ -271,11 +298,14 @@ def confirm_advance():
                 con.commit()
                 new_class_id = cur.lastrowid
 
-            # Insert student into the new class
+            # Insert student into the new class, while keeping them in the old one
             for id in ids:
                 cur.execute(
-                    "UPDATE student SET class_id = ?, class_type = ? WHERE student_id = ?",
-                    (new_class_id, "Advanced", id),
+                    """
+                    INSERT INTO class_student (class_id, student_id) 
+                    VALUES (?, ?) 
+                    """,
+                    (new_class_id, id),
                 )
 
             con.commit()

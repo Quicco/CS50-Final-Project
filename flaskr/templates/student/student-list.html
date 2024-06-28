@@ -97,7 +97,7 @@
             </form>
           </td>
           <td>
-            <form action="/delete_student" method="post" onsubmit="return confirmDeletion()">
+            <form action="/delete_student" method="post" onsubmit="return handleAction('deleteStudent')">
               <input
                 name="student_id"
                 type="hidden"

@@ -20,6 +20,7 @@
             <th>Year</th>
             <th class="col-md-1"></th>
             <th class="col-md-1"></th>
+            <th class="col-md-1"></th>
           </tr>
         </thead>
         <tbody>
@@ -55,10 +56,27 @@
                 <span class="material-symbols-outlined"
                   ><input
                     name="action"
-                    onclick="return confirmArchive()"
+                    onclick="return handleAction('archiveClass')"
                     id="select-btn"
                     type="submit"
                     value="Archive"
+                /></span>
+              </form>
+            </td>
+            <td>
+              <form action="/actions" method="post">
+                <input
+                  name="class_id"
+                  type="hidden"
+                  value="{{ class['class_id'] }}"
+                />
+                <span class="material-symbols-outlined"
+                  ><input
+                    name="action"
+                    onclick="return handleAction('deleteClass')"
+                    id="select-btn"
+                    type="submit"
+                    value="Delete"
                 /></span>
               </form>
             </td>

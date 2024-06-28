@@ -34,13 +34,14 @@ def create_tables():
         course TEXT, 
         class_type TEXT, 
         teacher_id INTEGER,
-        class_id INTEGER,
-        FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
-        FOREIGN KEY (class_id) REFERENCES class(class_id)
+        FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id)
         );""",
+        # Class_student junction table
+        "CREATE TABLE IF NOT EXISTS class_student (class_id INTEGER, student_id INTEGER, PRIMARY KEY (class_id, student_id), FOREIGN KEY (class_id) REFERENCES class(class_id), FOREIGN KEY (student_id) REFERENCES student(student_id));",
         # Class_teacher junction table
         "CREATE TABLE IF NOT EXISTS class_teacher (class_id INTEGER, teacher_id INTEGER, PRIMARY KEY (class_id, teacher_id), FOREIGN KEY (class_id) REFERENCES class(class_id), FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id));",
     ]
+
     for query in queries:
         cur.execute(query)
     con.commit()
@@ -111,14 +112,22 @@ def populate_db():
                 "location": "Lisbon",
                 "course": "Junior Fullstack Developer",
                 "class_type": "PowerUp",
-                "class_id": class_id,
             }
         )
+
+        student_id = cur.lastrowid  # Get the newly inserted student's ID
+
+        # Insert into class_student junction table
+        cur.execute(
+            "INSERT INTO class_student (class_id, student_id) VALUES (?, ?)",
+            (class_id, student_id),
+        )
+    con.commit()
 
     for student in students:
         values = tuple(student.values())
         cur.execute(
-            "INSERT INTO student (name, email, phone, location, course, class_type, class_id) VALUES (?, ?, ?, ? , ?, ?, ?)",
+            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
             values,
         )
     con.commit()

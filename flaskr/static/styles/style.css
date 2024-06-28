@@ -160,10 +160,8 @@ input[type="submit"]:hover {
 
 /* --- Homepage Styling ---*/
 main {
-  border: 2px solid var(--border-clr);
-  border-radius: 4px;
   padding: 1rem;
-  margin: 1rem auto;
+  margin: 0 auto;
   text-align: center;
 }
 

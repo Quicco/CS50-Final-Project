@@ -3,14 +3,23 @@ function goBack() {
   window.history.back();
 }
 
-// Prompt the user whether or not they want to delete a student
-function confirmDeletion() {
-  const message = "Are you sure you want to delete this student?"
-  return confirm(message);
-}
+function handleAction(action) {
+  let message = "";
 
-// Prompt the user whether or not they want to archive a class
-function confirmArchive() {
-  const message = "Are you sure you want to archive this class?"
-  return confirm(message);
+  switch (action) {
+    case "deleteStudent":
+      message = "Are you sure you want to delete this student?";
+      return confirm(message);
+      
+    case "archiveClass":
+      message = "Are you sure you want to archive this class?";
+      return confirm(message);
+
+      case "deleteClass":
+      message = "Are you sure you want to delete this class?";
+      return confirm(message);
+      
+    default:
+      return; 
+  }
 }
