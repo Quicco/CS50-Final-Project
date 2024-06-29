@@ -1,8 +1,24 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "layout.html" %} 
+
 
 {% block header %}
   {{ super() }}
 {% endblock %}
+
+{% block nav %}
+  {% if loggedin %}
+  <a style="color: white;">{{ welcome_msg }}</a>
+  <form action="/logout">
+    <input type="submit" value="Logout" />
+  </form>
+  {% endif %}
+
+{% endblock %}
+
+
+{% block body %}
+
+
 
 <!--Ongoing classes-->
 <main class="container-fluid homepage-main">

@@ -113,7 +113,7 @@ def unarchive_class(class_id):
     try:
         con, cur = connect_to_db()
 
-        cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?)", (class_id,))
+        cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?);", (class_id,))
         con.commit()
 
         classes, archived = fetch_classes()
@@ -131,7 +131,7 @@ def delete_class(class_id):
     try:
         con, cur = connect_to_db()
 
-        cur.execute("DELETE FROM class WHERE class_id = (?)", (class_id,))
+        cur.execute("DELETE FROM class WHERE class_id = (?),", (class_id,))
         con.commit()
 
         classes, archived = fetch_classes()
@@ -141,6 +141,18 @@ def delete_class(class_id):
             archived=archived,
             loggedin=True,
         )
+    finally:
+        con.close()
+
+
+def welcome_user(email):
+    try:
+        con, cur = connect_to_db()
+        user = cur.execute(
+            "SELECT name FROM teacher WHERE email = (?);", (email,)
+        ).fetchone()
+
+        return f"Welcome, {user[0]}"
     finally:
         con.close()
 
@@ -171,14 +183,18 @@ def login():
             query = """SELECT email, password FROM teacher WHERE email = (?);"""
             cur.execute(query, (email,))
             results = cur.fetchone()
+
             try:
                 if results and ph.verify(results["password"], pw):
                     classes, archived = fetch_classes()
+
+                    welcome_msg = welcome_user(email)
                     return render_template(
                         "homepage/homepage.html",
                         classes=classes,
                         loggedin=True,
                         archived=archived,
+                        welcome_msg=welcome_msg,
                     )
             except VerifyMismatchError:
                 error = "Incorrect password"

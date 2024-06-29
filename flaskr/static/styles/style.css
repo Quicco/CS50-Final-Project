@@ -21,8 +21,6 @@
 
 /* --- Body Styling ---*/
 body {
-  display: flex;
-  flex-direction: column;
   background-color: var(--bcg-clr);
   color: #212121;
   font-family: "Rubik";
