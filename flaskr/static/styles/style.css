@@ -21,6 +21,8 @@
 
 /* --- Body Styling ---*/
 body {
+  display: flex;
+  flex-direction: column;
   background-color: var(--bcg-clr);
   color: #212121;
   font-family: "Rubik";
@@ -165,6 +167,19 @@ main {
   text-align: center;
 }
 
+footer {
+  background-color: #272727;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 0px 8px rgba(0,0,0,.6);
+}
+
+.homepage-main {
+  margin: 100px auto;
+}
+
 ul {
   list-style: none;
 }
@@ -200,6 +215,11 @@ ul {
 .button-container {
   display: flex;
   gap: .5rem;
+}
+
+.empty-class {
+  max-height: 250px;
+  max-width: 400px;
 }
 
 /* --- Students List Page --- */

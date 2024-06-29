@@ -34,7 +34,7 @@
       {% endif %}
         <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
       {% if page < total_pages %}
-        <a class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
+        <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
       {% endif %}
       </div>
 
@@ -50,7 +50,7 @@
 
        <form action="/advance" method="post">
          <input name="class_id" type="hidden" value="{{ class_id }}" />
-         <input type="submit" id="advance-btn" value="Advance to Next Stage">
+         <input aria-label="Advance student" type="submit" id="advance-btn" value="Advance to Next Stage">
        </form>
       </div>
   </div>
@@ -60,11 +60,11 @@
     <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
-          <th class="col-md-2">Name</th>
+          <th class="col-md-3">Name</th>
           <th>Email</th>
           <th class="col-md-3">Phone</th>
           <th>Location</th>
-          <th class="col-md-2">Course</th>
+          <th class="col-md-3">Course</th>
           <th class="col-md-3">Class Type</th>
           <th></th>
           <th></th>
@@ -91,8 +91,8 @@
                 type="hidden"
                 value="{{ class_id }}"
               />
-              <span class="material-symbols-outlined">
-                <input id="edit-btn" type="submit" value="Edit" name="Edit">
+              <span title="Edit student" class="material-symbols-outlined">
+                <input aria-label="Edit student" id="edit-btn" type="submit" value="Edit" name="Edit">
                 </span>
             </form>
           </td>
@@ -104,8 +104,8 @@
                 value="{{ student['student_id'] }}"
               />
               <input name="class_id" type="hidden" value="{{ class_id }}" />
-              <span class="material-symbols-outlined">
-                <input id="delete-btn" type="submit" value="Delete">
+              <span title="Delete student" class="material-symbols-outlined">
+                <input aria-label="Delete student" id="delete-btn" type="submit" value="Delete">
                 </span>
             </form>
           </td>

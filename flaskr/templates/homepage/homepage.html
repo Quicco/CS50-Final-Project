@@ -5,9 +5,9 @@
 {% endblock %}
 
 <!--Ongoing classes-->
-<main class="container-fluid">
-  {% if classes %}
+<main class="container-fluid homepage-main">
   <h2>Ongoing classes</h2>
+  {% if classes %}
   <ul class="container">
     <li>
       <table class="table-responsive table table-striped table-hover">
@@ -39,6 +39,8 @@
                   value="{{ class['class_id'] }}"
                 />
                 <input
+                  title="Select class"
+                  aria-label="Select ongoing class"
                   name="action"
                   id="select-btn"
                   type="submit"
@@ -53,8 +55,9 @@
                   type="hidden"
                   value="{{ class['class_id'] }}"
                 />
-                <span class="material-symbols-outlined"
+                <span title="Archive class" class="material-symbols-outlined"
                   ><input
+                    aria-label="Archive class"
                     name="action"
                     onclick="return handleAction('archiveClass')"
                     id="select-btn"
@@ -72,6 +75,8 @@
                 />
                 <span class="material-symbols-outlined"
                   ><input
+                    title="Delete class"
+                    aria-label="Delete class"
                     name="action"
                     onclick="return handleAction('deleteClass')"
                     id="select-btn"
@@ -87,15 +92,19 @@
     </li>
   </ul>
 
+  {% else %}
+  <p>No ongoing classes at the moment.</p>
+  <img class="container-fluid empty-class" src="{{ url_for('static', filename='img/empty-class.jpg') }}" alt="Picture depicting an empty classroom.">
+
   {% endif %} {% if archived %}
   <!--Archived classes-->
-  <div class="archived-classes">
+  <div class="archived-classes container-fluid">
     <h2>Archived Classes</h2>
   <div class="archive">
     <div class="form-wrapper">
     <form action="/actions" method="post">
-      <select class="dropdown" name="class_id" id="archived">
-        <option value="" selected disabled hidden>Select one</option>
+      <select aria-label="Select an archived class" class="dropdown" name="class_id" id="archived">
+        <option value="" selected disabled hidden>Select an archived class</option>
         {% for class in archived %}
         <option value="{{ class['class_id'] }}">
           {{ class['class_type'] }} #{{ class['class_id'] }} - {{ class['time_slot'] }} | {{
@@ -104,10 +113,12 @@
         {% endfor %}
       </select>
     </div>
+    <!--Action buttons-->
       <div class="button-container">
-        <input name="action" id="select-btn" type="submit" value="Select" />
-        <span class="material-symbols-outlined">
+        <input title="Select class" aria-label="Select archived class" name="action" id="select-btn" type="submit" value="Select" />
+        <span title="Unarchive" class="material-symbols-outlined">
           <input
+            aria-label="Unarchive class"
             name="action"
             id="select-btn"
             type="submit"
@@ -119,6 +130,11 @@
   </div>
 </div>
 
+{% else %}
+<h2>Archived Classes</h2>
+  <p>There are no archived classes.</p>
   {% endif %}
 </main>
+
+<footer></footer>
 {% endblock %}
