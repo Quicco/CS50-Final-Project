@@ -1,12 +1,9 @@
 {% extends "homepage/homepage.html" %} 
 
+
+
+
 {% block body %}
-
-{% block header %}
-  {{ super() }}
-{% endblock %}
-
-
 <main class="container-fluid">
 <h1>Students List</h1>
 
@@ -47,11 +44,12 @@
         </form>
         {% endif %}
 
-
+      {% if archived == 0 %}
        <form action="/advance" method="post">
          <input name="class_id" type="hidden" value="{{ class_id }}" />
          <input aria-label="Advance student" type="submit" id="advance-btn" value="Advance to Next Stage">
        </form>
+       {% endif %}
       </div>
   </div>
   
