@@ -96,40 +96,35 @@ def populate_db():
         )
     con.commit()
 
-    #  Populate student table
-    students = []
     # Create a list with 24 ones and 24 twos
     class_ids = [1] * 24 + [2] * 24 + [3] * 24
     # Shuffle the list to randomize the order
     random.shuffle(class_ids)
 
     for class_id in class_ids:
-        students.append(
-            {
-                "name": fake.name(),
-                "email": fake.email(),
-                "phone": validate_phone_num(fake.phone_number()),
-                "location": "Lisbon",
-                "course": "Junior Fullstack Developer",
-                "class_type": "PowerUp",
-            }
+        student = {
+            "name": fake.name(),
+            "email": fake.email(),
+            "phone": validate_phone_num(fake.phone_number()),
+            "location": "Lisbon",
+            "course": "Junior Fullstack Developer",
+            "class_type": "PowerUp",
+        }
+
+        values = tuple(student.values())
+        cur.execute(
+            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
+            values,
         )
 
-        student_id = cur.lastrowid  # Get the newly inserted student's ID
+        student_id = cur.lastrowid
 
         # Insert into class_student junction table
         cur.execute(
             "INSERT INTO class_student (class_id, student_id) VALUES (?, ?)",
             (class_id, student_id),
         )
-    con.commit()
 
-    for student in students:
-        values = tuple(student.values())
-        cur.execute(
-            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
-            values,
-        )
     con.commit()
 
 

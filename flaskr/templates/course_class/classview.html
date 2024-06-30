@@ -1,0 +1,71 @@
+{% extends "layout.html" %} 
+
+{% block body %}
+<header></header>
+<h1>Students List</h1>
+
+{% block return %}
+<button onclick="goBack()">&#8592</button>
+{% endblock %}
+
+<ul>
+  {% if students|length < 24 %}
+  <form action="/add_student" method="post">
+    <input name="class_id" type="hidden" value="{{ class_id }}" />
+    <button>Add</button>
+  </form>
+  {% endif %}
+
+  {% if students %}
+  <li>
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Location</th>
+          <th>Course</th>
+          <th>Class Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student['name'] }}</td>
+          <td>{{ student['email'] }}</td>
+          <td>{{ student['phone'] }}</td>
+          <td>{{ student['location'] }}</td>
+          <td>{{ student['course'] }}</td>
+          <td>{{ student['class_type'] }}</td>
+          <td>
+            <form action="/edit_student" method="post">
+              <input
+                name="student_id"
+                type="hidden"
+                value="{{ student['student_id'] }}"
+              />
+              <button type="submit">Edit</button>
+            </form>
+          </td>
+          <td>
+            <form action="/delete_student" method="post" onsubmit="return confirmDeletion()">
+              <input
+                name="student_id"
+                type="hidden"
+                value="{{ student['student_id'] }}"
+              />
+              <input name="class_id" type="hidden" value="{{ class_id }}" />
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <h5>There are currently no students in this class.</h5>
+      </tbody>
+    </table>
+  </li>
+  {% endif %}
+</ul>
+{% endblock %}

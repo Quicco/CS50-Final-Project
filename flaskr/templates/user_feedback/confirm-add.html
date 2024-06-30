@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{{ msg }}
+THIS IS THE CLASS ID: {{ class_id }}
+
+<form action="/list" method="post">
+  <input type="hidden" name="class_id" value="{{ class_id }}">
+  <input type="submit" value="Go back">
+</form>
+
+{% endblock %}
