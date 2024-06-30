@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block nav %}
+<a href="{{ url_for('homepage')}}">Home</a>
   <a href="{{ url_for('archived_classes')}}">Archived Classes</a>
   {% if loggedin %}
   <!-- <a style="color: white;">{{ welcome_msg }}</a> -->

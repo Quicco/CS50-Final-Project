@@ -1,18 +1,6 @@
 {% extends "homepage/homepage.html" %}
 
 
-{% block nav %}
-  <a href="{{ url_for('homepage')}}">Ongoing Classes</a>
-  {% if loggedin %}
-  <div class="user">
-    <!-- <a style="color: white;">{{ welcome_msg }}</a> -->
-    <form action="/logout">
-      <input type="submit" value="Logout" />
-    </form>
-  </div>
-  {% endif %}
-{% endblock %}
-
 {% block body %}
 
 {% if archived %}

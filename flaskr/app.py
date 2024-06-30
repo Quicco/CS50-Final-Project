@@ -367,6 +367,7 @@ def list():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+            loggedin=True,
         )
 
     except sqlite3.Error as e:
