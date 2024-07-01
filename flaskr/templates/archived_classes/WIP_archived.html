@@ -1,0 +1,48 @@
+{% extends "homepage/homepage.html" %}
+
+
+{% block body %}
+
+  <div class="search-filters">
+    <h2>Archived Classes</h2>
+    <input oninput="search()" type="search" value="q"> 
+    <div class="filters">
+      <!--For location in locations-->
+      <form action="filter/{{ location }}">
+        <input type="hidden" name="{{ location }}" value="{{ location }}">
+        <input type="submit" value="{{ location }}">
+      </form>
+      <!--For location in locations-->
+    </div>
+  </div>
+
+  {% if archived %}
+    <table>
+      <thead>
+        <tr>
+          <th>Class Type</th>
+          <th>Course</th>
+          <th>Time Slot</th>
+          <th>Students</th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- for class in archived-->
+        <tr>
+          <td>Class Type</td>
+          <td>Course</td>
+          <td>Time Slot</td>
+          <td>Students</td>
+          <td>Year</td>
+          <td>SELECT ARCHIVED CLASS</td>
+          <td>UNARCHIVE</td>
+        </tr>
+        <!-- for class in archived-->
+      </tbody>
+    </table>
+  {% else %}
+    <p>There are no archived classes.</p>
+  {% endif %}
+
+{% endblock %}

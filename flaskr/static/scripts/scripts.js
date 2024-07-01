@@ -23,3 +23,13 @@ function handleAction(action) {
       return; 
   }
 }
+
+function search() {
+  let input = document.querySelector('input');
+
+  input.addEventListener('input', async function() {
+    let response = await fetch('/search?q=' + input.value);
+    let archivedClasses = response.text();
+    
+  })
+}

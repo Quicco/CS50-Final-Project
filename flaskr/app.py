@@ -76,84 +76,6 @@ def fetch_students(class_id, page):
         con.close()
 
 
-def select_class(class_id):
-    if not class_id:
-        return render_template("/archived_classes/archived_classes.html")
-
-    archived = request.form.get("archived")  # returns 0 (unarchived) or 1 (archived)
-    print(archived)
-    page = request.args.get("page", 1, type=int)
-    students, students_per_page, total_pages = fetch_students(class_id, page)
-
-    return render_template(
-        "student/student-list.html",
-        students=students,
-        class_id=class_id,
-        students_per_page=students_per_page,
-        total_pages=total_pages,
-        page=page,
-        loggedin=True,
-        archived=archived,
-    )
-
-
-def archive_class(class_id):
-    try:
-        con, cur = connect_to_db()
-
-        cur.execute("UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,))
-        con.commit()
-
-        classes, archived = fetch_classes()
-        welcome_msg = welcome_user()
-        return render_template(
-            "homepage/homepage.html",
-            classes=classes,
-            archived=archived,
-            loggedin=True,
-            welcome_msg=welcome_msg,
-        )
-    finally:
-        con.close()
-
-
-def unarchive_class(class_id):
-    try:
-        con, cur = connect_to_db()
-
-        cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?);", (class_id,))
-        con.commit()
-
-        classes, archived = fetch_classes()
-        welcome_msg = welcome_user()
-        return render_template(
-            "archived_classes/archived_classes.html",
-            archived=archived,
-            loggedin=True,
-            welcome_msg=welcome_msg,
-        )
-    finally:
-        con.close()
-
-
-def delete_class(class_id):
-    try:
-        con, cur = connect_to_db()
-
-        cur.execute("DELETE FROM class WHERE class_id = (?),", (class_id,))
-        con.commit()
-
-        classes, archived = fetch_classes()
-        return render_template(
-            "homepage/homepage.html",
-            classes=classes,
-            archived=archived,
-            loggedin=True,
-        )
-    finally:
-        con.close()
-
-
 def welcome_user():
     try:
         email = session["email"]
@@ -225,23 +147,115 @@ def logout():
 
 
 #  Class Related Routes
-@app.route("/actions", methods=["GET", "POST"])
-def student_list():
+@app.route("/actions/select_ongoing_class", methods=["GET", "POST"])
+def select_ongoing_class():
     if request.method == "POST":
 
         class_id = request.form.get("class_id")
-
         if not class_id:
-            return redirect("/homepage")
+            return render_template("/archived_classes/archived_classes.html")
 
-        if "action" in request.form and request.form.get("action") == "Select":
-            return select_class(class_id)
-        elif "action" in request.form and request.form.get("action") == "Archive":
-            return archive_class(class_id)
-        elif "action" in request.form and request.form.get("action") == "Delete":
-            return delete_class(class_id)
-        else:
-            return unarchive_class(class_id)
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+
+        return render_template(
+            "student/student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+            loggedin=True,
+            is_active_class=True,
+        )
+
+
+@app.route("/actions/select_archived_class", methods=["GET", "POST"])
+def select_archived_class():
+    if request.method == "POST":
+
+        class_id = request.form.get("class_id")
+        if not class_id:
+            return render_template("/archived_classes/archived_classes.html")
+
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+
+        return render_template(
+            "student/student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+            loggedin=True,
+            is_active_class=False,
+        )
+
+
+@app.route("/actions/archive", methods=["GET", "POST"])
+def archive_class():
+    try:
+
+        class_id = request.form.get("class_id")
+        if not class_id:
+            return render_template("/archived_classes/homepage.html")
+
+        con, cur = connect_to_db()
+        cur.execute("UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        welcome_msg = welcome_user()
+        return render_template(
+            "homepage/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
+            welcome_msg=welcome_msg,
+        )
+    finally:
+        con.close()
+
+
+@app.route("/actions/unarchive", methods=["GET", "POST"])
+def unarchive_class():
+    try:
+        class_id = request.POST.get("class_id")
+        con, cur = connect_to_db()
+
+        cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?);", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        welcome_msg = welcome_user()
+        return render_template(
+            "archived_classes/archived_classes.html",
+            archived=archived,
+            loggedin=True,
+            welcome_msg=welcome_msg,
+        )
+    finally:
+        con.close()
+
+
+@app.route("/actions/delete", methods=["GET", "POST"])
+def delete_class(class_id):
+    try:
+        con, cur = connect_to_db()
+
+        cur.execute("DELETE FROM class WHERE class_id = (?),", (class_id,))
+        con.commit()
+
+        classes, archived = fetch_classes()
+        return render_template(
+            "homepage/homepage.html",
+            classes=classes,
+            archived=archived,
+            loggedin=True,
+        )
+    finally:
+        con.close()
 
 
 @app.route("/advance", methods=["GET", "POST"])
@@ -276,7 +290,7 @@ def confirm_advance():
         ids = [int(id) for id in students_ids]
 
         if not students_ids:
-            return "NO CHECKED STUDENTS"
+            return "NO CHECKED STUDENTS"  # TODO: Add an error message
 
         try:
             con, cur = connect_to_db()
@@ -629,9 +643,20 @@ def homepage():
 def archived_classes():
     classes, archived = fetch_classes()
     welcome_msg = welcome_user()
-    return render_template(
-        "archived_classes/archived_classes.html",
-        archived=archived,
-        loggedin=True,
-        welcome_msg=welcome_msg,
-    )
+    # return render_template(
+    #     "archived_classes/archived_classes.html",
+    #     archived=archived,
+    #     loggedin=True,
+    #     welcome_msg=welcome_msg,
+    # )
+    return render_template("archived_classes/WIP_archived.html")
+
+
+# Search Related Route
+@app.route("/search")
+def searc():
+    q = request.args.get("q")
+
+    if q:
+        con, cur = connect_to_db()
+        archived = cur.execute("SELECT * FROM class WHERE ")

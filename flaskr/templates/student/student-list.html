@@ -44,7 +44,7 @@
         </form>
         {% endif %}
 
-      {% if archived == 0 %}
+      {% if is_active_class  %}
        <form action="/advance" method="post">
          <input name="class_id" type="hidden" value="{{ class_id }}" />
          <input aria-label="Advance student" type="submit" id="advance-btn" value="Advance to Next Stage">
