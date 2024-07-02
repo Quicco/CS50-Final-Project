@@ -1,8 +1,3 @@
-// Might delete this, as it doesn't fullfill exactly what I need
-function goBack() {
-  window.history.back();
-}
-
 function handleAction(action) {
   let message = "";
 
@@ -25,11 +20,46 @@ function handleAction(action) {
 }
 
 function search() {
-  let input = document.querySelector('input');
+  let input = document.querySelector('.search');
 
   input.addEventListener('input', async function() {
     let response = await fetch('/search?q=' + input.value);
-    let archivedClasses = response.text();
-    
+
+    if (response.ok) {
+      let archivedClasses = await response.json();
+      console.log(archivedClasses);
+      
+      let tbody = document.querySelector("tbody");
+      tbody.innerHTML = "";
+
+      // Insert the data onto the tables
+      archivedClasses.forEach(archivedClass => {
+        let tableRow = document.createElement("tr");
+        // Create the cells for each data
+        let classTypeCell = document.createElement("td");
+        classTypeCell.textContent = archivedClass.class_type;
+        tableRow.appendChild(classTypeCell);
+
+        let courseCell = document.createElement("td");
+        courseCell.textContent = archivedClass.course;
+        tableRow.appendChild(courseCell);
+
+        let timeSlotCell = document.createElement("td");
+        timeSlotCell.textContent = archivedClass.time_slot;
+        tableRow.appendChild(timeSlotCell);
+
+        let locationCell = document.createElement("td");
+        locationCell.textContent = archivedClass.location;
+        tableRow.appendChild(locationCell);
+        
+        let yearCell = document.createElement("td");
+        yearCell.textContent = archivedClass.year;
+        tableRow.appendChild(yearCell);
+
+        tbody.appendChild(tableRow);
+      })
+    }  else {
+      console.error('Search request failed:', response.statusText);
+    }
   })
 }

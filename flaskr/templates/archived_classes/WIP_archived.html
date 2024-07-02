@@ -5,7 +5,7 @@
 
   <div class="search-filters">
     <h2>Archived Classes</h2>
-    <input oninput="search()" type="search" value="q"> 
+    <input oninput="search()" class="search" autocomplete="off" autofocus placeholder="Search" type="search" value=""> 
     <div class="filters">
       <!--For location in locations-->
       <form action="filter/{{ location }}">
@@ -16,33 +16,18 @@
     </div>
   </div>
 
-  {% if archived %}
-    <table>
+
+  <!-- <ul></ul> -->
+    <table class="table table-fluid">
       <thead>
         <tr>
           <th>Class Type</th>
           <th>Course</th>
           <th>Time Slot</th>
-          <th>Students</th>
           <th>Year</th>
         </tr>
       </thead>
       <tbody>
-        <!-- for class in archived-->
-        <tr>
-          <td>Class Type</td>
-          <td>Course</td>
-          <td>Time Slot</td>
-          <td>Students</td>
-          <td>Year</td>
-          <td>SELECT ARCHIVED CLASS</td>
-          <td>UNARCHIVE</td>
-        </tr>
-        <!-- for class in archived-->
       </tbody>
     </table>
-  {% else %}
-    <p>There are no archived classes.</p>
-  {% endif %}
-
 {% endblock %}

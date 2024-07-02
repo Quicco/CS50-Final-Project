@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
@@ -654,9 +654,19 @@ def archived_classes():
 
 # Search Related Route
 @app.route("/search")
-def searc():
+def search():
     q = request.args.get("q")
 
     if q:
         con, cur = connect_to_db()
-        archived = cur.execute("SELECT * FROM class WHERE ")
+        like_pattern = f"%{q}%"
+        rows = cur.execute(
+            f"SELECT * FROM class WHERE location LIKE ?", (like_pattern,)
+        ).fetchall()
+        con.close()
+
+        results = [dict(row) for row in rows]
+    else:
+        results = []
+
+    return jsonify(results)
