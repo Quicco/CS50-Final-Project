@@ -656,12 +656,18 @@ def archived_classes():
 @app.route("/search")
 def search():
     q = request.args.get("q")
-
     if q:
         con, cur = connect_to_db()
         like_pattern = f"%{q}%"
         rows = cur.execute(
-            f"SELECT * FROM class WHERE location LIKE ?", (like_pattern,)
+            f"SELECT * FROM class WHERE class_type LIKE (?) OR course LIKE (?) OR location LIKE (?) OR time_slot LIKE (?) OR year LIKE (?)",
+            (
+                like_pattern,
+                like_pattern,
+                like_pattern,
+                like_pattern,
+                like_pattern,
+            ),
         ).fetchall()
         con.close()
 
