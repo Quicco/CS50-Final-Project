@@ -309,7 +309,7 @@ tr {
 }
 
 #advance-btn {
-  background: none;
+  background: #fff;
   border: 1px solid var(--border-clr);
   border-radius: 0px;
   color: var(--color);
