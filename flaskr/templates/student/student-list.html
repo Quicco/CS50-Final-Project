@@ -22,7 +22,7 @@
 {% endblock %} -->
 
 <!-- Pagination buttons -->
-<ul class="container">
+<div class="container">
   {% if students_per_page %}
   <div class="options">
     <div class="pagination">
@@ -54,7 +54,6 @@
   </div>
   
   <!--Table containing all students from a specific class-->
-  <li>
     <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
@@ -114,9 +113,8 @@
         <h5>There are currently no students in this class.</h5>
       </tbody>
     </table>
-  </li>
   {% endif %}
-</ul>
+</div>
 
 </main>
 

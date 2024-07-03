@@ -23,7 +23,7 @@
   {% endblock %} -->
   
     <!-- Pagination buttons -->
-    <ul class="container">
+    <div class="container">
       {% if students_per_page %}
       <div class="options">
         <div class="pagination">
@@ -50,16 +50,13 @@
             <input name="class_id" type="hidden" value="{{ class_id }}" />
             <input type="submit" id="cancel-advance-btn" value="Cancel" />
           </form>
-          <form action="/confirm_advance" method="post">
-            <input name="class_id" type="hidden" value="{{ class_id }}" />
-            <input type="submit" id="advance-btn" value="Confirm Advancement" />
-          </form>
+            <input type="submit" id="advance-btn" value="Confirm Advancement" form="advance-form"/>
         </div>
       </div>
   
       <!--Table containing all students from a specific class-->
-      <li>
-        <form action="/confirm_advance" method="post">
+        <form action="/confirm_advance" method="post" id="advance-form">
+          <input name="class_id" type="hidden" value="{{ class_id }}" />
           <table class="table-responsive table table-striped table-hover">
             <thead>
               <tr>
@@ -94,11 +91,10 @@
             </tbody>
           </table>
         </form>
-      </li>
       {% else %}
       <h5>There are currently no students in this class.</h5>
       {% endif %}
-    </ul>
+    </div>
     {% endif %}
   </main>
   

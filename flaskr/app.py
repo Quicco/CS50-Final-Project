@@ -278,6 +278,7 @@ def advance():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+            loggedin=True,
             promotion_view=True,
         )
 
@@ -382,6 +383,7 @@ def list():
             total_pages=total_pages,
             page=page,
             loggedin=True,
+            is_active_class=True,
         )
 
     except sqlite3.Error as e:
@@ -412,6 +414,7 @@ def advance_list():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+            loggedin=True,
             promotion_view=True,
         )
 
