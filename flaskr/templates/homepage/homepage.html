@@ -23,6 +23,15 @@
 
 {% block body %}
 <!--Ongoing classes-->
+<div class="pagination">
+  {% if page > 1 %}
+    <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
+  {% endif %}
+    <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+    <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
+  {% endif %}
+  </div>
 <main class="container-fluid homepage-main">
   <h2>Ongoing classes</h2>
   {% if classes %}

@@ -2,7 +2,18 @@
 
 
 {% block body %}
-{% if archived %}
+{% if archived_classes %}
+
+<div class="pagination">
+  {% if page > 1 %}
+    <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
+  {% endif %}
+    <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+    <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
+  {% endif %}
+  </div>
+
 <div class="search-filters">
   <h2>Archived Classes</h2>
   <input oninput="search()" class="search-input" autocomplete="off" autofocus placeholder="Search for 'Class Type', 'Course', 'Time Slot' 'Location",  type="search" value=""> 
@@ -20,7 +31,7 @@
           <th></th>
         </tr>
       </thead>
-      {% for class in archived %}
+      {% for class in archived_classes %}
           <tr>
             <td>{{ class['class_type'] }} #{{ class['class_id'] }}</td>
             <td>{{ class['course'] }}</td>

@@ -27,19 +27,37 @@ def connect_to_db():
     return con, cur
 
 
-def fetch_classes():
+def fetch_classes(page):
     try:
         con, cur = connect_to_db()
 
         classes = cur.execute(
             "SELECT * FROM class WHERE archived = 0 ORDER BY location;"
         ).fetchall()
+        ongoing_classes = [dict(row) for row in classes]
 
-        archived = cur.execute(
+        ongoing_classes_per_page, total_pages = pagination(ongoing_classes, page)
+
+        return ongoing_classes, ongoing_classes_per_page, total_pages
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
+def fetch_archived_classes(page):
+    try:
+        con, cur = connect_to_db()
+
+        archived_classes = cur.execute(
             "SELECT * FROM class WHERE archived = 1 ORDER BY location;"
         ).fetchall()
+        archived = [dict(row) for row in archived_classes]
 
-        return classes, archived
+        archived_classes_per_page, total_pages = pagination(archived_classes, page)
+
+        return archived, archived_classes_per_page, total_pages
 
     except sqlite3.Error as e:
         return f"Database error: {e}"
@@ -62,11 +80,7 @@ def fetch_students(class_id, page):
         students = [dict(row) for row in results]
 
         # Pagination
-        per_page = 8
-        start = (page - 1) * per_page
-        end = start + per_page
-        total_pages = (len(students) + per_page - 1) // per_page
-        students_per_page = students[start:end]
+        students_per_page, total_pages = pagination(students, page)
 
         return students, students_per_page, total_pages
 
@@ -74,6 +88,17 @@ def fetch_students(class_id, page):
         return f"Database error: {e}"
     finally:
         con.close()
+
+
+def pagination(items, page):
+    # Pagination
+    per_page = 8
+    start = (page - 1) * per_page
+    end = start + per_page
+    total_pages = (len(items) + per_page - 1) // per_page
+    items_per_page = items[start:end]
+
+    return items_per_page, total_pages
 
 
 def welcome_user():
@@ -118,7 +143,9 @@ def login():
 
             try:
                 if results and ph.verify(results["password"], pw):
-                    classes, archived = fetch_classes()
+
+                    page = request.args.get("page", 1, type=int)
+                    classes, archived = fetch_classes(page)
 
                     welcome_msg = welcome_user()
                     return render_template(
@@ -631,20 +658,28 @@ def delete_student():
 #  Navigation Related Routes
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
-    classes, archived = fetch_classes()
+
+    page = request.args.get("page", 1, type=int)
+    classes, items_per_page, total_pages = fetch_classes(page)
     welcome_msg = welcome_user()
+
     return render_template(
         "homepage/homepage.html",
         classes=classes,
-        archived=archived,
         loggedin=True,
         welcome_msg=welcome_msg,
+        page=page,
+        items_per_page=items_per_page,
+        total_pages=total_pages,
     )
 
 
 @app.route("/archived_classes", methods=["GET", "POST"])
 def archived_classes():
-    classes, archived = fetch_classes()
+    page = request.args.get("page", 1, type=int)
+    archived_classes, archived_classes_per_page, total_pages = fetch_archived_classes(
+        page
+    )
 
     # return render_template(
     #     "archived_classes/archived_classes.html",
@@ -653,7 +688,12 @@ def archived_classes():
     #     welcome_msg=welcome_msg,
     # )
     return render_template(
-        "archived_classes/WIP_archived.html", archived=archived, loggedin=True
+        "archived_classes/WIP_archived.html",
+        page=page,
+        archived_classes=archived_classes,
+        archived_classes_per_page=archived_classes_per_page,
+        total_pages=total_pages,
+        loggedin=True,
     )
 
 
