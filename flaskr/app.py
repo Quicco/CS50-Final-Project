@@ -221,7 +221,7 @@ def archive_class():
 @app.route("/actions/unarchive", methods=["GET", "POST"])
 def unarchive_class():
     try:
-        class_id = request.POST.get("class_id")
+        class_id = request.form.get("class_id")
         con, cur = connect_to_db()
 
         cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?);", (class_id,))
@@ -230,7 +230,7 @@ def unarchive_class():
         classes, archived = fetch_classes()
         welcome_msg = welcome_user()
         return render_template(
-            "archived_classes/archived_classes.html",
+            "archived_classes/WIP_archived.html",
             archived=archived,
             loggedin=True,
             welcome_msg=welcome_msg,
@@ -645,14 +645,16 @@ def homepage():
 @app.route("/archived_classes", methods=["GET", "POST"])
 def archived_classes():
     classes, archived = fetch_classes()
-    welcome_msg = welcome_user()
+
     # return render_template(
     #     "archived_classes/archived_classes.html",
     #     archived=archived,
     #     loggedin=True,
     #     welcome_msg=welcome_msg,
     # )
-    return render_template("archived_classes/WIP_archived.html")
+    return render_template(
+        "archived_classes/WIP_archived.html", archived=archived, loggedin=True
+    )
 
 
 # Search Related Route
@@ -663,8 +665,9 @@ def search():
         con, cur = connect_to_db()
         like_pattern = f"%{q}%"
         rows = cur.execute(
-            f"SELECT * FROM class WHERE class_type LIKE (?) OR course LIKE (?) OR location LIKE (?) OR time_slot LIKE (?) OR year LIKE (?)",
+            f"SELECT * FROM class WHERE (class_id LIKE (?) OR class_type LIKE (?) OR course LIKE (?) OR location LIKE (?) OR time_slot LIKE (?) OR year LIKE (?)) AND archived = 1",
             (
+                like_pattern,
                 like_pattern,
                 like_pattern,
                 like_pattern,
@@ -676,6 +679,7 @@ def search():
 
         results = [dict(row) for row in rows]
     else:
-        results = []
+        classes, archived = fetch_classes()
+        results = [archived]
 
     return jsonify(results)

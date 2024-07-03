@@ -2,32 +2,74 @@
 
 
 {% block body %}
-
-  <div class="search-filters">
-    <h2>Archived Classes</h2>
-    <input oninput="search()" class="search" autocomplete="off" autofocus placeholder="Search" type="search" value=""> 
-    <div class="filters">
-      <!--For location in locations-->
-      <form action="filter/{{ location }}">
-        <input type="hidden" name="{{ location }}" value="{{ location }}">
-        <input type="submit" value="{{ location }}">
-      </form>
-      <!--For location in locations-->
-    </div>
-  </div>
-
-
-  <!-- <ul></ul> -->
-    <table class="table table-fluid">
+{% if archived %}
+<div class="search-filters">
+  <h2>Archived Classes</h2>
+  <input oninput="search()" class="search-input" autocomplete="off" autofocus placeholder="Search for 'Class Type', 'Course', 'Time Slot' 'Location",  type="search" value=""> 
+</div>
+  <div class="container-fluid">
+    <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
           <th>Class Type</th>
           <th>Course</th>
           <th>Time Slot</th>
+          <th>location</th>
           <th>Year</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
-      <tbody>
-      </tbody>
+      {% for class in archived %}
+          <tr>
+            <td>{{ class['class_type'] }} #{{ class['class_id'] }}</td>
+            <td>{{ class['course'] }}</td>
+            <td>{{ class['time_slot'] }}</td>
+            <td>{{ class['location'] }}</td>
+            <td>{{ class['year'] }}</td>
+            <td>
+            <form action="/actions/select_archived_class" method="post">
+              <input type="hidden" name="is_active_class" id="" value="{{ False }}">
+              <input
+                name="class_id"
+                type="hidden"
+                value="{{ class['class_id'] }}"
+              />
+              <input
+                title="Select class"
+                aria-label="Select ongoing class"
+                name="action"
+                id="select-btn"
+                type="submit"
+                value="Select"
+              />
+            </form>
+          </td>
+            <td>
+              <form action="/actions/unarchive" method="post">
+                <input
+                  name="class_id"
+                  type="hidden"
+                  value="{{ class['class_id'] }}"
+                />
+                <span class="material-symbols-outlined"
+                  ><input
+                    title="Delete class"
+                    aria-label="Delete class"
+                    name="action"
+                    id="select-btn"
+                    type="submit"
+                    value="Unarchive"
+                /></span>
+              </form>
+            </td>
+            <td>
+            </td>
+          </tr>
+          {% endfor %}
     </table>
+    {% else %}
+    <p>There are no archived classes.</p>
+    {% endif %}
+  </div>
 {% endblock %}

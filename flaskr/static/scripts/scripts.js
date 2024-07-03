@@ -20,24 +20,23 @@ function handleAction(action) {
 }
 
 function search() {
-  let input = document.querySelector('.search');
+  let input = document.querySelector('.search-input');
 
   input.addEventListener('input', async function() {
     let response = await fetch('/search?q=' + input.value);
 
     if (response.ok) {
       let archivedClasses = await response.json();
-      console.log(archivedClasses);
       
       let tbody = document.querySelector("tbody");
       tbody.innerHTML = "";
 
-      // Insert the data onto the tables
+      // For each ahived class, insert the data onto the tables
       archivedClasses.forEach(archivedClass => {
         let tableRow = document.createElement("tr");
         // Create the cells for each data
         let classTypeCell = document.createElement("td");
-        classTypeCell.textContent = archivedClass.class_type;
+        classTypeCell.textContent = archivedClass.class_type + "  #" + archivedClass.class_id;
         tableRow.appendChild(classTypeCell);
 
         let courseCell = document.createElement("td");
