@@ -223,7 +223,6 @@ def select_archived_class():
 @app.route("/actions/archive", methods=["GET", "POST"])
 def archive_class():
     try:
-
         class_id = request.form.get("class_id")
         if not class_id:
             return render_template("/archived_classes/homepage.html")
@@ -232,15 +231,21 @@ def archive_class():
         cur.execute("UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,))
         con.commit()
 
-        classes, archived = fetch_classes()
+        page = request.args.get("page", 1, type=int)
+        classes, items_per_page, total_pages = fetch_classes(page)
         welcome_msg = welcome_user()
+
         return render_template(
             "homepage/homepage.html",
             classes=classes,
-            archived=archived,
             loggedin=True,
             welcome_msg=welcome_msg,
+            page=page,
+            items_per_page=items_per_page,
+            total_pages=total_pages,
         )
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
     finally:
         con.close()
 
@@ -254,35 +259,47 @@ def unarchive_class():
         cur.execute("UPDATE class SET archived = 0 WHERE class_id = (?);", (class_id,))
         con.commit()
 
-        classes, archived = fetch_classes()
+        page = request.args.get("page", 1, type=int)
+        archived_classes, items_per_page, total_pages = fetch_archived_classes(page)
         welcome_msg = welcome_user()
+
         return render_template(
             "archived_classes/WIP_archived.html",
-            archived=archived,
+            archived_classes=archived_classes,
             loggedin=True,
             welcome_msg=welcome_msg,
+            page=page,
+            items_per_page=items_per_page,
+            total_pages=total_pages,
         )
     finally:
         con.close()
 
 
 @app.route("/actions/delete", methods=["GET", "POST"])
-def delete_class(class_id):
-    try:
-        con, cur = connect_to_db()
+def delete_class():
+    if request.method == "POST":
+        class_id = request.form.get("class_id")
+        try:
+            con, cur = connect_to_db()
 
-        cur.execute("DELETE FROM class WHERE class_id = (?),", (class_id,))
-        con.commit()
+            cur.execute("DELETE FROM class WHERE class_id = (?);", (class_id,))
+            # Delete all students associated with the class being deleted
+            cur.execute("DELETE FROM class_student WHERE class_id = (?);", (class_id,))
+            con.commit()
 
-        classes, archived = fetch_classes()
-        return render_template(
-            "homepage/homepage.html",
-            classes=classes,
-            archived=archived,
-            loggedin=True,
-        )
-    finally:
-        con.close()
+            page = request.args.get("page", 1, type=int)
+            classes, items_per_page, total_pages = fetch_classes(page)
+            return render_template(
+                "homepage/homepage.html",
+                classes=classes,
+                loggedin=True,
+                page=page,
+                items_per_page=items_per_page,
+                total_pages=total_pages,
+            )
+        finally:
+            con.close()
 
 
 @app.route("/advance", methods=["GET", "POST"])
@@ -676,6 +693,7 @@ def homepage():
 
 @app.route("/archived_classes", methods=["GET", "POST"])
 def archived_classes():
+
     page = request.args.get("page", 1, type=int)
     archived_classes, archived_classes_per_page, total_pages = fetch_archived_classes(
         page
