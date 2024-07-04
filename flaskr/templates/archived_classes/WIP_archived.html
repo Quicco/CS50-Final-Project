@@ -61,13 +61,14 @@
               value="{{ False }}"
             />
             <input
+              id="archived_id"
               name="class_id"
               type="hidden"
               value="{{ class['class_id'] }}"
             />
             <input
               title="Select class"
-              aria-label="Select ongoing class"
+              aria-label="Select archived class"
               name="action"
               id="select-btn"
               type="submit"
@@ -87,7 +88,7 @@
                 title="Delete class"
                 aria-label="Delete class"
                 name="action"
-                id="select-btn"
+                id="unarchive-btn"
                 type="submit"
                 value="Unarchive"
             /></span>
@@ -96,6 +97,40 @@
       </tr>
       {% endfor %}
     </table>
+
+
+    <template id="template-row">
+      <tr>
+        <td class="class-type"></td>
+        <td class="course"></td>
+        <td class="time-slot"></td>
+        <td class="location"></td>
+        <td class="year"></td>
+        <td>
+          <form class="select-form" method="post">
+            <input type="hidden" name="class_id">
+            <input type="hidden" name="is_active_class" value="{{ False }}">
+            <input type="submit" id="select-btn" title="Select class" aria-label="Select archived class" value="Select">
+          </form>
+        </td>
+        <td>
+          <form class="unarchive-form" method="post">
+            <input type="hidden" name="class_id">
+              <span class="material-symbols-outlined"><input
+                title="Unarchive class"
+                aria-label="Unarchive class"
+                name="action"
+                id="unarchive-btn"
+                type="submit"
+                value="Unarchive"
+            /></span> 
+            </button>
+          </form>
+        </td>
+      </tr>
+    </template>
+
+
     {% else %}
     <p>There are no archived classes.</p>
     <img

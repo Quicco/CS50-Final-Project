@@ -739,7 +739,10 @@ def search():
 
         results = [dict(row) for row in rows]
     else:
-        classes, archived = fetch_classes()
-        results = [archived]
+        page = request.args.get("page", 1, type=int)
+        archived_classes, archived_classes_per_page, total_pages = (
+            fetch_archived_classes(page)
+        )
+        results = [dict(row) for row in archived_classes]
 
     return jsonify(results)

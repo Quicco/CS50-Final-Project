@@ -1,64 +1,61 @@
 function handleAction(action) {
-  let message = "";
+  let message = '';
 
   switch (action) {
-    case "deleteStudent":
-      message = "Are you sure you want to delete this student?";
-      return confirm(message);
-      
-    case "archiveClass":
-      message = "Are you sure you want to archive this class?";
+    case 'deleteStudent':
+      message = 'Are you sure you want to delete this student?';
       return confirm(message);
 
-      case "deleteClass":
-      message = "Are you sure you want to delete this class?";
+    case 'archiveClass':
+      message = 'Are you sure you want to archive this class?';
       return confirm(message);
-      
+
+    case 'deleteClass':
+      message = 'Are you sure you want to delete this class?';
+      return confirm(message);
+
     default:
-      return; 
+      return;
   }
 }
 
 function search() {
-  let input = document.querySelector('.search-input');
+  const input = document.querySelector('.search-input');
+  const tbody = document.querySelector('tbody');
+  const templateRow = document.querySelector('#template-row');
 
-  input.addEventListener('input', async function() {
-    let response = await fetch('/search?q=' + input.value);
+  input.addEventListener('input', async function () {
+    const response = await fetch('/search?q=' + input.value);
 
     if (response.ok) {
-      let archivedClasses = await response.json();
-      
-      let tbody = document.querySelector("tbody");
-      tbody.innerHTML = "";
+      const archivedClasses = await response.json();
+      tbody.innerHTML = ''; // Clear existing rows
 
-      // For each ahived class, insert the data onto the tables
-      archivedClasses.forEach(archivedClass => {
-        let tableRow = document.createElement("tr");
-        // Create the cells for each data
-        let classTypeCell = document.createElement("td");
-        classTypeCell.textContent = archivedClass.class_type + "  #" + archivedClass.class_id;
-        tableRow.appendChild(classTypeCell);
+      archivedClasses.forEach((archivedClass) => {
+        // Clone the template row and populate it with data
+        const tableRow = templateRow.content.cloneNode(true);
+        tableRow.querySelector('.class-type').textContent = archivedClass.class_type + ' #' + archivedClass.class_id;
+        tableRow.querySelector('.course').textContent = archivedClass.course;
+        tableRow.querySelector('.time-slot').textContent = archivedClass.time_slot;
+        tableRow.querySelector('.location').textContent = archivedClass.location;
+        tableRow.querySelector('.year').textContent = archivedClass.year;
 
-        let courseCell = document.createElement("td");
-        courseCell.textContent = archivedClass.course;
-        tableRow.appendChild(courseCell);
+        // Update form actions dynamically
+        const selectForm = tableRow.querySelector('.select-form');
+        selectForm.action = `{{ url_for('actions.select_archived_class') }}`;
+        selectForm.querySelector('input[name="class_id"]').value = archivedClass.class_id;
 
-        let timeSlotCell = document.createElement("td");
-        timeSlotCell.textContent = archivedClass.time_slot;
-        tableRow.appendChild(timeSlotCell);
+        const unarchiveForm = tableRow.querySelector('.unarchive-form');
+        unarchiveForm.action = `{{ url_for('actions.unarchive') }}`;
+        unarchiveForm.querySelector('input[name="class_id"]').value = archivedClass.class_id;
 
-        let locationCell = document.createElement("td");
-        locationCell.textContent = archivedClass.location;
-        tableRow.appendChild(locationCell);
-        
-        let yearCell = document.createElement("td");
-        yearCell.textContent = archivedClass.year;
-        tableRow.appendChild(yearCell);
-
-        tbody.appendChild(tableRow);
-      })
-    }  else {
+        tbody.appendChild(tableRow); 
+      });
+    } else {
       console.error('Search request failed:', response.statusText);
     }
-  })
+  });
 }
+
+search(); // Initialize search functionality
+
