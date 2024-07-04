@@ -145,14 +145,16 @@ def login():
                 if results and ph.verify(results["password"], pw):
 
                     page = request.args.get("page", 1, type=int)
-                    classes, archived = fetch_classes(page)
+                    classes, items_per_page, total_pages = fetch_classes(page)
 
                     welcome_msg = welcome_user()
                     return render_template(
                         "homepage/homepage.html",
+                        page=page,
+                        items_per_page=items_per_page,
+                        total_pages=total_pages,
                         classes=classes,
                         loggedin=True,
-                        archived=archived,
                         welcome_msg=welcome_msg,
                     )
             except VerifyMismatchError:
