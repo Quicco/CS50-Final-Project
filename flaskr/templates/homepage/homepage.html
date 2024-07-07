@@ -1,14 +1,15 @@
-{% extends "layout.html" %} 
-
-
-{% block header %}
-  {{ super() }}
-{% endblock %}
-
-{% block nav %}
+{% extends "layout.html" %} {% block header %} {{ super() }} {% endblock %}
+{%block nav %}
 <div class="nav-list">
   <ul class="nav-links">
-    <li><a onclick="colorSelectedLink(this)" class="nav-" href="{{ url_for('homepage')}}">Home</a></li>
+    <li>
+      <a
+        onclick="colorSelectedLink(this)"
+        class="nav-"
+        href="{{ url_for('homepage')}}"
+        >Home</a
+      >
+    </li>
     <li><a href="{{ url_for('archived_classes')}}">Archived Classes</a></li>
   </ul>
   {% if loggedin %}
@@ -17,121 +18,137 @@
     <input type="submit" value="Logout" />
   </form>
 </div>
-  {% endif %}
-{% endblock %}
-
-
-{% block body %}
+{% endif %} {% endblock %} {% block body %}
 <!--Ongoing classes-->
 <main class="container-fluid classes-main">
   <h2>Ongoing classes</h2>
-  
+
   {% if classes %}
   <div class="container">
     <div class="user-actions">
-    <div class="pagination">
-      {% if page > 1 %}
-        <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
-      {% endif %}
-        <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
-      {% if page < total_pages %}
-        <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
-      {% endif %}
-    
-      
-      {% if students|length < 24 %}
+      <div class="pagination">
+        {% if page > 1 %}
+        <a
+          class="prev-btn page-link"
+          href="{{ url_for('homepage', page=page-1) }}"
+          >Previous</a
+        >
+        {% endif %}
+        <span class="page-link pages"
+          >Page {{ page }} of {{ total_pages }}</span
+        >
+        {% if page < total_pages %}
+        <a
+          aria-label="Next"
+          class="next-btn page-link"
+          href="{{ url_for('homepage', page=page+1) }}"
+          >Next</a
+        >
+        {% endif %} {% if classes|length < 50 %}
         <form action="/actions/add_class" method="post">
           <button class="add-btn">Add</button>
         </form>
-      {% endif %}
+        {% endif %}
+      </div>
     </div>
 
-      <table class="table-responsive table table-striped table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>Class Type</th>
-            <th class="col-md-2">Course</th>
-            <th>Time Slot</th>
-            <th>Location</th>
-            <th>Year</th>
-            <th class="col-md-1"></th>
-            <th class="col-md-1"></th>
-            <th class="col-md-1"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for class in classes %}
-            <td>{{ class['class_type'] }} # {{ class['class_id'] }}</td>
-            <td>{{ class['course'] }}</td>
-            <td>{{ class['time_slot'] }}</td>
-            <td>{{ class['location'] }}</td>
-            <td>{{ class['year'] }}</td>
-            <td>
-              <form action="/actions/select_ongoing_class" method="post">
-                <input type="hidden" name="is_ongoing_class" id="" value="{{ True }}">
-                <input
-                  name="class_id"
-                  type="hidden"
-                  value="{{ class['class_id'] }}"
-                />
-                <input
-                  title="Select class"
-                  aria-label="Select ongoing class"
+    <table class="table-responsive table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Class Type</th>
+          <th class="col-md-2">Course</th>
+          <th>Time Slot</th>
+          <th>Location</th>
+          <th>Year</th>
+          <th class="col-md-1"></th>
+          <th class="col-md-1"></th>
+          <th class="col-md-1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for class in classes_per_page %}
+        <tr>
+          <td>{{ class['class_type'] }} # {{ class['class_id'] }}</td>
+          <td>{{ class['course'] }}</td>
+          <td>{{ class['time_slot'] }}</td>
+          <td>{{ class['location'] }}</td>
+          <td>{{ class['year'] }}</td>
+          <td>
+            <form action="/actions/select_ongoing_class" method="post">
+              <input
+                type="hidden"
+                name="is_ongoing_class"
+                id=""
+                value="{{ True }}"
+              />
+              <input
+                name="class_id"
+                type="hidden"
+                value="{{ class['class_id'] }}"
+              />
+              <input
+                title="Select class"
+                aria-label="Select ongoing class"
+                name="action"
+                id="select-btn"
+                type="submit"
+                value="Select"
+              />
+            </form>
+          </td>
+          <td>
+            <form action="/actions/archive" method="post">
+              <input
+                name="class_id"
+                type="hidden"
+                value="{{ class['class_id'] }}"
+              />
+              <span title="Archive class" class="material-symbols-outlined"
+                ><input
+                  aria-label="Archive class"
                   name="action"
+                  onclick="return handleAction('archiveClass')"
                   id="select-btn"
                   type="submit"
-                  value="Select"
-                />
-              </form>
-            </td>
-            <td>
-              <form action="/actions/archive" method="post">
-                <input
-                  name="class_id"
-                  type="hidden"
-                  value="{{ class['class_id'] }}"
-                />
-                <span title="Archive class" class="material-symbols-outlined"
-                  ><input
-                    aria-label="Archive class"
-                    name="action"
-                    onclick="return handleAction('archiveClass')"
-                    id="select-btn"
-                    type="submit"
-                    value="Archive"
-                /></span>
-              </form>
-            </td>
-            <td>
-              <form action="/actions/delete" method="post">
-                <input
-                  name="class_id"
-                  type="hidden"
-                  value="{{ class['class_id'] }}"
-                />
-                <span class="material-symbols-outlined"
-                  ><input
-                    title="Delete class"
-                    aria-label="Delete class"
-                    name="action"
-                    onclick="return handleAction('deleteClass')"
-                    id="select-btn"
-                    type="submit"
-                    value="Delete"
-                /></span>
-              </form>
-            </td>
-          </tr>
+                  value="Archive"
+              /></span>
+            </form>
+          </td>
+          <td>
+            <form action="/actions/delete" method="post">
+              <input
+                name="class_id"
+                type="hidden"
+                value="{{ class['class_id'] }}"
+              />
+              <span class="material-symbols-outlined"
+                ><input
+                  title="Delete class"
+                  aria-label="Delete class"
+                  name="action"
+                  onclick="return handleAction('deleteClass')"
+                  id="select-btn"
+                  type="submit"
+                  value="Delete"
+              /></span>
+            </form>
+          </td>
           {% endfor %}
-        </tbody>
-      </table>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   {% else %}
   <p>No ongoing classes at the moment.</p>
-  <img class="container-fluid empty-class" src="{{ url_for('static', filename='img/empty-class.jpg') }}" alt="Picture depicting an empty classroom.">
+  <img
+    class="container-fluid empty-class"
+    src="{{ url_for('static', filename='img/empty-class.jpg') }}"
+    alt="Picture depicting an empty classroom."
+  />
 
-  {% endif %} </main>
+  {% endif %}
+</main>
 
 <!-- <footer></footer> -->
 {% endblock %}

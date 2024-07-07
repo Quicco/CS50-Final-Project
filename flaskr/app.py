@@ -35,9 +35,9 @@ def fetch_classes(page):
         ).fetchall()
         ongoing_classes = [dict(row) for row in classes]
 
-        ongoing_classes_per_page, total_pages = pagination(ongoing_classes, page)
+        classes_per_page, total_pages = pagination(ongoing_classes, page)
 
-        return ongoing_classes, ongoing_classes_per_page, total_pages
+        return ongoing_classes, classes_per_page, total_pages
 
     except sqlite3.Error as e:
         return f"Database error: {e}"
@@ -763,7 +763,7 @@ def delete_student():
 def homepage():
 
     page = request.args.get("page", 1, type=int)
-    classes, items_per_page, total_pages = fetch_classes(page)
+    classes, classes_per_page, total_pages = fetch_classes(page)
     welcome_msg = welcome_user()
 
     return render_template(
@@ -772,7 +772,7 @@ def homepage():
         loggedin=True,
         welcome_msg=welcome_msg,
         page=page,
-        items_per_page=items_per_page,
+        classes_per_page=classes_per_page,
         total_pages=total_pages,
     )
 
