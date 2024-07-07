@@ -287,7 +287,7 @@ def archive_class():
         con.commit()
 
         page = request.args.get("page", 1, type=int)
-        classes, items_per_page, total_pages = fetch_classes(page)
+        classes, classes_per_page, total_pages = fetch_classes(page)
         welcome_msg = welcome_user()
 
         return render_template(
@@ -296,7 +296,7 @@ def archive_class():
             loggedin=True,
             welcome_msg=welcome_msg,
             page=page,
-            items_per_page=items_per_page,
+            classes_per_page=classes_per_page,
             total_pages=total_pages,
         )
     except sqlite3.Error as e:

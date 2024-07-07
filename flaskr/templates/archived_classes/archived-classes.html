@@ -19,7 +19,7 @@
       {% if page > 1 %}
       <a
         class="prev-btn page-link"
-        href="{{ url_for('list', page=page-1, class_id=class_id) }}"
+        href="{{ url_for('archived_classes', page=page-1)}}"
         >Previous</a
       >
       {% endif %}
@@ -28,7 +28,7 @@
       <a
         aria-label="Next"
         class="next-btn page-link"
-        href="{{ url_for('list', page=page+1, class_id=class_id) }}"
+        href="{{ url_for('archived_classes', page=page+1) }}"
         >Next</a
       >
       {% endif %}
@@ -45,7 +45,7 @@
           <th class="col-md-1"></th>
         </tr>
       </thead>
-      {% for class in archived_classes %}
+      {% for class in archived_classes_per_page %}
       <tr>
         <td>{{ class['class_type'] }} #{{ class['class_id'] }}</td>
         <td>{{ class['course'] }}</td>
