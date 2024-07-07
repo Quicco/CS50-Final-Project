@@ -1,0 +1,9 @@
+{% extends "layout.html" %} {% block body %}
+
+<h3>{{ msg }}</h3>
+
+<form action="/homepage" method="post">
+  <input type="submit" value="Go back" />
+</form>
+
+{% endblock %}

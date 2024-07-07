@@ -128,6 +128,11 @@
         </tr>
         {% endfor %} {% else %}
         <h5>There are currently no students in this class.</h5>
+        <form action="/add_student" method="post">
+          <input name="class_id" type="hidden" value="{{ class_id }}" />
+          <input name="page" type="hidden" value="{{ page }}" />
+          <button class="add-btn">Add</button>
+        </form>
       </tbody>
     </table>
     {% endif %}

@@ -3,7 +3,9 @@ from phonenumbers import NumberParseException
 
 # Constants
 LOCATIONS = ["Lisbon", "Sintra", "Porto"]
-CLASS_TYPES = ["PowerUp", "Bootcamp"]
+CLASS_TYPES = ["PowerUp", "Advanced"]
+COURSES = ["Junior Fullstack Developer"]
+TIME_SLOTS = ["Morning", "Afternoon", "All Day"]
 
 
 # Validate the phone number and standardize the format

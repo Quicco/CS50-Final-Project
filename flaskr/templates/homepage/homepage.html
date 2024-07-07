@@ -28,6 +28,7 @@
   
   {% if classes %}
   <div class="container">
+    <div class="user-actions">
     <div class="pagination">
       {% if page > 1 %}
         <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
@@ -36,7 +37,15 @@
       {% if page < total_pages %}
         <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
       {% endif %}
-      </div>
+    
+      
+      {% if students|length < 24 %}
+        <form action="/actions/add_class" method="post">
+          <button class="add-btn">Add</button>
+        </form>
+      {% endif %}
+    </div>
+
       <table class="table-responsive table table-striped table-hover">
         <thead class="thead-dark">
           <tr>

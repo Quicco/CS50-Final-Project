@@ -2,9 +2,8 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
-import os
-from utils import validate_phone_num, LOCATIONS, CLASS_TYPES
-import sqlite3
+from utils import validate_phone_num, LOCATIONS, CLASS_TYPES, COURSES, TIME_SLOTS
+import sqlite3, datetime, os
 
 load_dotenv()
 
@@ -219,6 +218,61 @@ def select_archived_class():
             page=page,
             loggedin=True,
         )
+
+
+@app.route("/actions/add_class", methods=["GET", "POST"])
+def add_class():
+    if request.method == "POST":
+        # A class has: Class Type, Course, TimeSlot, Location, Year
+
+        current_year = datetime.date.today().year
+        years = range(current_year, current_year + 5)
+
+        return render_template(
+            "course_classes/add-class.html",
+            locations=LOCATIONS,
+            time_slots=TIME_SLOTS,
+            class_types=CLASS_TYPES,
+            courses=COURSES,
+            years=years,
+        )
+
+
+@app.route("/confirm/add_class", methods=["GET", "POST"])
+def confirm_add_class():
+    if request.method == "POST":
+        try:
+            new_class = {
+                "course": request.form.get("course"),
+                "class_type": request.form.get("class_type"),
+                "time_slot": request.form.get("time_slot"),
+                "location": request.form.get("location"),
+                "year": request.form.get("year"),
+                "archived": 0,
+            }
+
+            con, cur = connect_to_db()
+
+            # Insert the new class onto the db
+            cur.execute(
+                "INSERT INTO class (course, class_type, time_slot, location, year, archived) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    new_class["course"],
+                    new_class["class_type"],
+                    new_class["time_slot"],
+                    new_class["location"],
+                    new_class["year"],
+                    new_class["archived"],
+                ),
+            )
+            con.commit()
+
+            return redirect(url_for("homepage"))
+
+        except sqlite3.Error as e:
+            return f"Database error: {e}"
+        finally:
+            con.close()
 
 
 @app.route("/actions/archive", methods=["GET", "POST"])
@@ -535,7 +589,7 @@ def edit_student():
             con.close()
 
 
-@app.route("/confirm_edit", methods=["GET", "POST"])
+@app.route("/confirm/edit", methods=["GET", "POST"])
 def confirm_edit():
     if request.method == "POST":
         # If it's not a valid phone number, keep old info but reset the phone field
@@ -608,7 +662,7 @@ def add_student():
         )
 
 
-@app.route("/confirm_add", methods=["GET", "POST"])
+@app.route("/confirm/add_student", methods=["GET", "POST"])
 def confirm_add():
     if request.method == "POST":
 

@@ -1,0 +1,43 @@
+{% extends "layout.html" %} {% block body %}
+<h1>Add a class</h1>
+
+<form action="/confirm/add_class" method="post">
+  <label for="class_type">Class Type</label>
+  <select name="class_type" id="class-type">
+    {% for type in class_types %}
+    <option value="{{ type }}">{{ type }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="course">Course</label>
+  <select name="course" id="course">
+    {% for course in courses %}
+    <option value="{{ course }}">{{ course }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="time_slot">Time Slot</label>
+  <select name="time_slot" id="time_slot">
+    {% for time_slot in time_slots %}
+    <option value="{{ time_slot }}">{{ time_slot }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="location">Location</label>
+  <select name="location" id="location">
+    {% for location in locations %}
+    <option value="{{ location }}">{{ location }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="year">Year</label>
+  <select name="year" id="year">
+    {% for year in years %}
+    <option value="{{ year }}">{{ year }}</option>
+    {% endfor %}
+  </select>
+
+  <input type="submit" value="Submit" />
+</form>
+
+{{ msg }} {% endblock %}
