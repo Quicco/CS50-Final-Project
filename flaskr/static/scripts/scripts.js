@@ -29,27 +29,37 @@ function search() {
 
     if (response.ok) {
       const archivedClasses = await response.json();
-      tbody.innerHTML = ''; // Clear existing rows
+      tbody.innerHTML = '';
 
+      // Clone the template row and populate it with data
       archivedClasses.forEach((archivedClass) => {
-        // Clone the template row and populate it with data
         const tableRow = templateRow.content.cloneNode(true);
-        tableRow.querySelector('.class-type').textContent = archivedClass.class_type + ' #' + archivedClass.class_id;
+
+        tableRow.querySelector('.class-type').textContent =
+          archivedClass.class_type + ' #' + archivedClass.class_id;
+
         tableRow.querySelector('.course').textContent = archivedClass.course;
-        tableRow.querySelector('.time-slot').textContent = archivedClass.time_slot;
-        tableRow.querySelector('.location').textContent = archivedClass.location;
+
+        tableRow.querySelector('.time-slot').textContent =
+          archivedClass.time_slot;
+
+        tableRow.querySelector('.location').textContent =
+          archivedClass.location;
+
         tableRow.querySelector('.year').textContent = archivedClass.year;
 
         // Update form actions dynamically
         const selectForm = tableRow.querySelector('.select-form');
         selectForm.action = `{{ url_for('actions.select_archived_class') }}`;
-        selectForm.querySelector('input[name="class_id"]').value = archivedClass.class_id;
+        selectForm.querySelector('input[name="class_id"]').value =
+          archivedClass.class_id;
 
         const unarchiveForm = tableRow.querySelector('.unarchive-form');
         unarchiveForm.action = `{{ url_for('actions.unarchive') }}`;
-        unarchiveForm.querySelector('input[name="class_id"]').value = archivedClass.class_id;
+        unarchiveForm.querySelector('input[name="class_id"]').value =
+          archivedClass.class_id;
 
-        tbody.appendChild(tableRow); 
+        tbody.appendChild(tableRow);
       });
     } else {
       console.error('Search request failed:', response.statusText);
@@ -58,4 +68,3 @@ function search() {
 }
 
 search(); // Initialize search functionality
-

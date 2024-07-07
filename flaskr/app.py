@@ -211,14 +211,13 @@ def select_archived_class():
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
         return render_template(
-            "student/student-list.html",
+            "archived_classes/archived-student-list.html",
             students=students,
             class_id=class_id,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
             loggedin=True,
-            is_active_class=False,
         )
 
 
@@ -266,7 +265,7 @@ def unarchive_class():
         welcome_msg = welcome_user()
 
         return render_template(
-            "archived_classes/WIP_archived.html",
+            "archived_classes/archived-classes.html",
             archived_classes=archived_classes,
             loggedin=True,
             welcome_msg=welcome_msg,
@@ -430,6 +429,37 @@ def list():
             page=page,
             loggedin=True,
             is_active_class=True,
+        )
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        con.close()
+
+
+@app.route("/archived_list", methods=["GET", "POST"])
+def archived_list():
+    if request.method == "POST":
+        class_id = request.form.get("class_id")
+    else:
+        class_id = request.args.get("class_id")
+
+    if not class_id:
+        # TODO Error message
+        print("ERROR - NO CLASS ID!")
+
+    con, cur = connect_to_db()
+    try:
+        page = request.args.get("page", 1, type=int)
+        students, students_per_page, total_pages = fetch_students(class_id, page)
+        return render_template(
+            "archived_classes/archived-student-list.html",
+            students=students,
+            class_id=class_id,
+            students_per_page=students_per_page,
+            total_pages=total_pages,
+            page=page,
+            loggedin=True,
         )
 
     except sqlite3.Error as e:
@@ -701,14 +731,8 @@ def archived_classes():
         page
     )
 
-    # return render_template(
-    #     "archived_classes/archived_classes.html",
-    #     archived=archived,
-    #     loggedin=True,
-    #     welcome_msg=welcome_msg,
-    # )
     return render_template(
-        "archived_classes/WIP_archived.html",
+        "archived_classes/archived-classes.html",
         page=page,
         archived_classes=archived_classes,
         archived_classes_per_page=archived_classes_per_page,

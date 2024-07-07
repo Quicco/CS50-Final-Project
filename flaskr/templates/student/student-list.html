@@ -1,14 +1,9 @@
-{% extends "homepage/homepage.html" %} 
-
-
-
-
-{% block body %}
+{% extends "homepage/homepage.html" %} {% block body %}
 <main class="container-fluid">
-<h1>Students List</h1>
+  <h1>Students List</h1>
 
-<!--Go back to the homepage-->
-<!-- {% block return %}
+  <!--Go back to the homepage-->
+  <!-- {% block return %}
   {% if promotion_view %}
   <form action="/list" method="post">
     <input name="class_id" type="hidden" value="{{ class_id }}" />
@@ -21,18 +16,29 @@
   {% endif %}
 {% endblock %} -->
 
-<!-- Pagination buttons -->
-<div class="container">
-  {% if students_per_page %}
-  <div class="options">
-    <div class="pagination">
-      {% if page > 1 %}
-        <a class="prev-btn page-link" href="{{ url_for('list', page=page-1, class_id=class_id) }}">Previous</a>
-      {% endif %}
-        <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
-      {% if page < total_pages %}
-        <a aria-label="Next" class="next-btn page-link" href="{{ url_for('list', page=page+1, class_id=class_id) }}">Next</a>
-      {% endif %}
+  <!-- Pagination buttons -->
+  <div class="container">
+    {% if students_per_page %}
+    <div class="options">
+      <div class="pagination">
+        {% if page > 1 %}
+        <a
+          class="prev-btn page-link"
+          href="{{ url_for('list', page=page-1, class_id=class_id) }}"
+          >Previous</a
+        >
+        {% endif %}
+        <span class="page-link pages"
+          >Page {{ page }} of {{ total_pages }}</span
+        >
+        {% if page < total_pages %}
+        <a
+          aria-label="Next"
+          class="next-btn page-link"
+          href="{{ url_for('list', page=page+1, class_id=class_id) }}"
+          >Next</a
+        >
+        {% endif %}
       </div>
 
       <div class="student-options">
@@ -43,17 +49,19 @@
           <button class="add-btn">Add</button>
         </form>
         {% endif %}
-
-      {% if is_active_class  %}
-       <form action="/advance" method="post">
-         <input name="class_id" type="hidden" value="{{ class_id }}" />
-         <input aria-label="Advance student" type="submit" id="advance-btn" value="Advance to Next Stage">
-       </form>
-       {% endif %}
+        <form action="/advance" method="post">
+          <input name="class_id" type="hidden" value="{{ class_id }}" />
+          <input
+            aria-label="Advance student"
+            type="submit"
+            id="advance-btn"
+            value="Advance to Next Stage"
+          />
+        </form>
       </div>
-  </div>
-  
-  <!--Table containing all students from a specific class-->
+    </div>
+
+    <!--Table containing all students from a specific class-->
     <table class="table-responsive table table-striped table-hover">
       <thead>
         <tr>
@@ -83,18 +91,24 @@
                 type="hidden"
                 value="{{ student['student_id'] }}"
               />
-              <input
-                name="class_id"
-                type="hidden"
-                value="{{ class_id }}"
-              />
+              <input name="class_id" type="hidden" value="{{ class_id }}" />
               <span title="Edit student" class="material-symbols-outlined">
-                <input aria-label="Edit student" id="edit-btn" type="submit" value="Edit" name="Edit">
-                </span>
+                <input
+                  aria-label="Edit student"
+                  id="edit-btn"
+                  type="submit"
+                  value="Edit"
+                  name="Edit"
+                />
+              </span>
             </form>
           </td>
           <td>
-            <form action="/delete_student" method="post" onsubmit="return handleAction('deleteStudent')">
+            <form
+              action="/delete_student"
+              method="post"
+              onsubmit="return handleAction('deleteStudent')"
+            >
               <input
                 name="student_id"
                 type="hidden"
@@ -102,20 +116,22 @@
               />
               <input name="class_id" type="hidden" value="{{ class_id }}" />
               <span title="Delete student" class="material-symbols-outlined">
-                <input aria-label="Delete student" id="delete-btn" type="submit" value="Delete">
-                </span>
+                <input
+                  aria-label="Delete student"
+                  id="delete-btn"
+                  type="submit"
+                  value="Delete"
+                />
+              </span>
             </form>
           </td>
         </tr>
-        {% endfor %}
-        
-        {% else %}
+        {% endfor %} {% else %}
         <h5>There are currently no students in this class.</h5>
       </tbody>
     </table>
-  {% endif %}
-</div>
-
+    {% endif %}
+  </div>
 </main>
 
 {% endblock %}

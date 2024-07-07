@@ -1,0 +1,75 @@
+{% extends "student/student-list.html" %} {% block body %}
+<main class="container-fluid">
+  <h1>Students List</h1>
+
+  <!--Go back to the homepage-->
+  <!-- {% block return %}
+  {% if promotion_view %}
+  <form action="/list" method="post">
+    <input name="class_id" type="hidden" value="{{ class_id }}" />
+    <input class="back-btn" type="submit" value="Go back">
+  </form>
+  {% else %}
+<form action="/homepage" method="post">
+  <input class="back-btn" type="submit" value="Go back">
+</form>
+  {% endif %}
+{% endblock %} -->
+
+  <!-- Pagination buttons -->
+  <div class="container">
+    {% if students_per_page %}
+    <div class="options">
+      <div class="pagination">
+        {% if page > 1 %}
+        <a
+          class="prev-btn page-link"
+          href="{{ url_for('archived_list', page=page-1, class_id=class_id) }}"
+          >Previous</a
+        >
+        {% endif %}
+        <span class="page-link pages"
+          >Page {{ page }} of {{ total_pages }}</span
+        >
+        {% if page < total_pages %}
+        <a
+          aria-label="Next"
+          class="next-btn page-link"
+          href="{{ url_for('archived_list', page=page+1, class_id=class_id) }}"
+          >Next</a
+        >
+        {% endif %}
+      </div>
+    </div>
+
+    <!--Table containing all students from a specific class-->
+    <table class="table-responsive table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="col-md-3">Name</th>
+          <th>Email</th>
+          <th class="col-md-3">Phone</th>
+          <th>Location</th>
+          <th class="col-md-3">Course</th>
+          <th class="col-md-3">Class Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students_per_page %}
+        <tr>
+          <td>{{ student['name'] }}</td>
+          <td>{{ student['email'] }}</td>
+          <td>{{ student['phone'] }}</td>
+          <td>{{ student['location'] }}</td>
+          <td>{{ student['course'] }}</td>
+          <td>{{ student['class_type'] }}</td>
+        </tr>
+        {% endfor %} {% else %}
+        <h5>There are currently no students in this class.</h5>
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</main>
+
+{% endblock %}
