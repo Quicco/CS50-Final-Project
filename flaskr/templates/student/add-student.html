@@ -1,29 +1,61 @@
-{% extends "layout.html" %} {% block body %}
-<h1>Add a student</h1>
+{% extends "homepage/homepage.html" %} {% block body %}
 
-<form action="/confirm/add_student" method="post">
-  <input type="hidden" name="class_id" value="{{ class_id }}" />
-  <input type="hidden" name="page" value="{{ page }}" />
+<h1 class="page-title">Add a student</h1>
 
-  <label for="name">Name</label>
-  <input id="name" name="name" type="text" required autocomplete="off" />
+<div class="form-wrapper">
+  <form action="/confirm/add_student" method="post">
+    <input type="hidden" name="class_id" value="{{ class_id }}" />
+    <input type="hidden" name="page" value="{{ page }}" />
 
-  <label for="email">Email</label>
-  <input id="email" name="email" type="text" required autocomplete="off" />
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        class="form-control"
+        id="name"
+        name="name"
+        type="text"
+        required
+        autocomplete="off"
+      />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+        required
+        autocomplete="off"
+      />
+    </div>
 
-  <label for="phone">Phone</label>
-  <input id="phone" name="phone" type="text" required autocomplete="off" />
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input
+        class="form-control"
+        id="phone"
+        name="phone"
+        type="text"
+        required
+        autocomplete="off"
+      />
+    </div>
 
-  <label for="location">Location</label>
-  <select name="location" id="location">
-    <option value="{{ location }}">{{ location }}</option>
-  </select>
-  <label for="class-type">Class Type</label>
-  <select name="class_type" id="class-type">
-    <option value="{{ class_type }}">{{ class_type }}</option>
-  </select>
+    <div class="form-group">
+      <label for="location">Location</label>
+      <select class="form-control" name="location" id="location">
+        <option value="{{ location }}">{{ location }}</option>
+      </select>
+    </div>
 
-  <input type="submit" value="Submit" />
-</form>
-
-{{ msg }} {% endblock %}
+    <div class="form-group">
+      <label for="class-type">Class Type</label>
+      <select class="form-control" name="class_type" id="class-type">
+        <option value="{{ class_type }}">{{ class_type }}</option>
+      </select>
+    </div>
+    <input type="submit" value="Submit" />
+  </form>
+</div>
+{% endblock %}

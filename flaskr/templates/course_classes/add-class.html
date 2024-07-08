@@ -1,43 +1,55 @@
 {% extends "layout.html" %} {% block body %}
-<h1>Add a class</h1>
+<h1 class="page-title">Add a class</h1>
 
-<form action="/confirm/add_class" method="post">
-  <label for="class_type">Class Type</label>
-  <select name="class_type" id="class-type">
-    {% for type in class_types %}
-    <option value="{{ type }}">{{ type }}</option>
-    {% endfor %}
-  </select>
+<div class="form-wrapper">
+  <form action="/confirm/add_class" method="post">
+    <div class="form-group">
+      <label for="class_type">Class Type</label>
+      <select class="form-control" name="class_type" id="class-type">
+        {% for type in class_types %}
+        <option value="{{ type }}">{{ type }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label for="course">Course</label>
-  <select name="course" id="course">
-    {% for course in courses %}
-    <option value="{{ course }}">{{ course }}</option>
-    {% endfor %}
-  </select>
+    <div class="form-group">
+      <label for="course">Course</label>
+      <select class="form-control" name="course" id="course">
+        {% for course in courses %}
+        <option value="{{ course }}">{{ course }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label for="time_slot">Time Slot</label>
-  <select name="time_slot" id="time_slot">
-    {% for time_slot in time_slots %}
-    <option value="{{ time_slot }}">{{ time_slot }}</option>
-    {% endfor %}
-  </select>
+    <div class="form-group">
+      <label for="time_slot">Time Slot</label>
+      <select class="form-control" name="time_slot" id="time_slot">
+        {% for time_slot in time_slots %}
+        <option value="{{ time_slot }}">{{ time_slot }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label for="location">Location</label>
-  <select name="location" id="location">
-    {% for location in locations %}
-    <option value="{{ location }}">{{ location }}</option>
-    {% endfor %}
-  </select>
+    <div class="form-group">
+      <label for="location">Location</label>
+      <select class="form-control" name="location" id="location">
+        {% for location in locations %}
+        <option value="{{ location }}">{{ location }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label for="year">Year</label>
-  <select name="year" id="year">
-    {% for year in years %}
-    <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
-  </select>
+    <div class="form-group">
+      <label for="year">Year</label>
+      <select class="form-control" name="year" id="year">
+        {% for year in years %}
+        <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <input type="submit" value="Submit" />
-</form>
+    <input type="submit" value="Submit" />
+  </form>
+</div>
 
 {{ msg }} {% endblock %}

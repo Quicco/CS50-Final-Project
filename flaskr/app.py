@@ -287,7 +287,6 @@ def archive_class():
         con, cur = connect_to_db()
         cur.execute("UPDATE class SET archived = 1 WHERE class_id = (?)", (class_id,))
         con.commit()
-
         page = request.args.get("page", 1, type=int)
         classes, classes_per_page, total_pages = fetch_classes(page)
         welcome_msg = welcome_user()
@@ -317,7 +316,9 @@ def unarchive_class():
         con.commit()
 
         page = request.args.get("page", 1, type=int)
-        archived_classes, items_per_page, total_pages = fetch_archived_classes(page)
+        archived_classes, archived_classes_per_page, total_pages = (
+            fetch_archived_classes(page)
+        )
         welcome_msg = welcome_user()
 
         return render_template(
@@ -326,7 +327,7 @@ def unarchive_class():
             loggedin=True,
             welcome_msg=welcome_msg,
             page=page,
-            items_per_page=items_per_page,
+            archived_classes_per_page=archived_classes_per_page,
             total_pages=total_pages,
         )
     finally:
@@ -642,6 +643,7 @@ def edit_student():
                 student=student,
                 locations=LOCATIONS,
                 class_types=CLASS_TYPES,
+                loggedin=True,
             )
 
         except sqlite3.Error as e:
@@ -699,7 +701,7 @@ def confirm_edit():
             )
             con.commit()
 
-            msg = "You have sucsessfully edited a student."
+            msg = "You have successfully edited a student."
             return render_template(
                 "feedback_msg/confirm-edit.html",
                 msg=msg,
@@ -726,6 +728,7 @@ def add_student():
             class_id=class_id,
             class_type=class_data[1],
             location=class_data[0],
+            loggedin=True,
         )
 
 
@@ -787,7 +790,7 @@ def confirm_add():
             )
             con.commit()
 
-            msg = "Student has sucessfully been added."
+            msg = "Student has successfully been added."
             return render_template(
                 "feedback_msg/confirm-add.html",
                 class_id=class_id,
@@ -827,6 +830,7 @@ def delete_student():
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
+            loggedin=True,
         )
 
 

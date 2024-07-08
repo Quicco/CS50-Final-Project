@@ -1,15 +1,12 @@
-{% extends "student/student-list.html" %} 
+{% extends "student/student-list.html" %} {% block body %}
 
+<main class="container-fluid">
+  {% if promotion_view %}
 
-{% block body %}
-  
-  <main class="container-fluid">
-    {% if promotion_view %}
-  
-    <h1>Advance Students</h1>
-  
-    <!--Go back to the homepage-->
-    <!-- {% block return %}
+  <h1 class="page-title">Advance Students</h1>
+
+  <!--Go back to the homepage-->
+  <!-- {% block return %}
     {% if promotion_view %}
     <form action="/list" method="post">
       <input name="class_id" type="hidden" value="{{ class_id }}" />
@@ -21,82 +18,88 @@
   </form>
     {% endif %}
   {% endblock %} -->
-  
-    <!-- Pagination buttons -->
-    <div class="container">
-      {% if students_per_page %}
-      <div class="options">
-        <div class="pagination">
-          {% if page > 1 %}
-          <a
-            class="prev-btn page-link"
-            href="{{ url_for('advance_list', page=page-1, class_id=class_id) }}"
-            >Previous</a
-          >
-          {% endif %}
-          <span class="page-link pages">Page {{ page }} of {{ total_pages }}</span>
-          {% if page < total_pages %}
-          <a
-            class="next-btn page-link"
-            href="{{ url_for('advance_list', page=page+1, class_id=class_id) }}"
-            >Next</a
-          >
-          {% endif %}
-        </div>
-  
-        <div class="student-options">  
-          <!-- Promotion button-->
-          <form action="/list" method="post">
-            <input name="class_id" type="hidden" value="{{ class_id }}" />
-            <input type="submit" id="cancel-advance-btn" value="Cancel" />
-          </form>
-            <input type="submit" id="advance-btn" value="Confirm Advancement" form="advance-form"/>
-        </div>
+
+  <!-- Pagination buttons -->
+  <div class="container">
+    {% if students_per_page %}
+    <div class="options">
+      <div class="pagination">
+        {% if page > 1 %}
+        <a
+          class="prev-btn page-link"
+          href="{{ url_for('advance_list', page=page-1, class_id=class_id) }}"
+          >Previous</a
+        >
+        {% endif %}
+        <span class="page-link pages"
+          >Page {{ page }} of {{ total_pages }}</span
+        >
+        {% if page < total_pages %}
+        <a
+          class="next-btn page-link"
+          href="{{ url_for('advance_list', page=page+1, class_id=class_id) }}"
+          >Next</a
+        >
+        {% endif %}
       </div>
-  
-      <!--Table containing all students from a specific class-->
-        <form action="/confirm_advance" method="post" id="advance-form">
+
+      <div class="student-options">
+        <!-- Promotion button-->
+        <form action="/list" method="post">
           <input name="class_id" type="hidden" value="{{ class_id }}" />
-          <table class="table-responsive table table-striped table-hover">
-            <thead>
-              <tr>
-                <th></th>
-                <th class="col-md-2">Name</th>
-                <th>Email</th>
-                <th class="col-md-3">Phone</th>
-                <th>Location</th>
-                <th class="col-md-2">Course</th>
-                <th class="col-md-3">Class Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for student in students_per_page %}
-              <tr>
-                <td>
-                  <input
-                    type="checkbox"
-                    name="checked"
-                    id="check"
-                    value="{{ student['student_id'] }}"
-                  />
-                </td>
-                <td>{{ student['name'] }}</td>
-                <td>{{ student['email'] }}</td>
-                <td>{{ student['phone'] }}</td>
-                <td>{{ student['location'] }}</td>
-                <td>{{ student['course'] }}</td>
-                <td>{{ student['class_type'] }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <input type="submit" id="cancel-advance-btn" value="Cancel" />
         </form>
-      {% else %}
-      <h5>There are currently no students in this class.</h5>
-      {% endif %}
+        <input
+          type="submit"
+          id="advance-btn"
+          value="Confirm Advancement"
+          form="advance-form"
+        />
+      </div>
     </div>
+
+    <!--Table containing all students from a specific class-->
+    <form action="/confirm_advance" method="post" id="advance-form">
+      <input name="class_id" type="hidden" value="{{ class_id }}" />
+      <table class="table-responsive table table-striped table-hover">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-md-2">Name</th>
+            <th>Email</th>
+            <th class="col-md-3">Phone</th>
+            <th>Location</th>
+            <th class="col-md-2">Course</th>
+            <th class="col-md-3">Class Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students_per_page %}
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                name="checked"
+                id="check"
+                value="{{ student['student_id'] }}"
+              />
+            </td>
+            <td>{{ student['name'] }}</td>
+            <td>{{ student['email'] }}</td>
+            <td>{{ student['phone'] }}</td>
+            <td>{{ student['location'] }}</td>
+            <td>{{ student['course'] }}</td>
+            <td>{{ student['class_type'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
+    {% else %}
+    <h5>There are currently no students in this class.</h5>
     {% endif %}
-  </main>
-  
-  {% endblock %}
-  
+  </div>
+  {% endif %}
+</main>
+
+{% endblock %}

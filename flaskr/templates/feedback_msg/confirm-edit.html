@@ -1,12 +1,19 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block body %}
 
-{% block body %}
+<div class="feedback-wrapper">
+  <img
+    class="container-fluid success-picture"
+    src="{{ url_for('static', filename='img/success action picture - septiana budyastuti.png') }}"
+    alt="Picture depicting a high five between two people."
+  />
 
-<h3>{{ msg }}</h3>
+  <h2><span class="success">Success!</span></h2>
+  <h3 class="feedback-msg">{{ msg }}</h3>
 
-<form action="/list" method="post">
-  <input type="hidden" name="class_id" value="{{ class_id }}">
-  <input type="submit" value="Go back">
-</form>
+  <form action="/list" method="post">
+    <input type="hidden" name="class_id" value="{{ class_id }}" />
+    <input class="btn-block" type="submit" value="Go back" />
+  </form>
+</div>
 
 {% endblock %}

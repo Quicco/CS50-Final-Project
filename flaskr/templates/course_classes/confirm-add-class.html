@@ -1,5 +1,11 @@
 {% extends "layout.html" %} {% block body %}
 
+<img
+  class="container-fluid empty-class"
+  src="{{ url_for('static', filename='img/sucess action picture - septiana budyastutijpg') }}"
+  alt="Picture depicting an empty classroom."
+/>
+
 <h3>{{ msg }}</h3>
 
 <form action="/homepage" method="post">

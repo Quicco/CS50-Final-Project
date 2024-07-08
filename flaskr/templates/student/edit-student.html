@@ -1,54 +1,55 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "homepage/homepage.html" %} {% block body %}
 
-<h1>Edit Student Info</h1>
+<h1 class="page-title">Edit Student Info</h1>
 
-<form action="/confirm/edit" autocomplete="off" method="post">
-  <input type="hidden" name="action" value="" />
-  <input name="class_id" type="hidden" value="{{ class_id }}" />
-  <input name="student_id" type="hidden" value="{{ student['student_id'] }}" />
+<div class="form-wrapper">
+  <form action="/confirm/edit" autocomplete="off" method="post">
+    <input type="hidden" name="action" value="" />
+    <input name="class_id" type="hidden" value="{{ class_id }}" />
+    <input
+      name="student_id"
+      type="hidden"
+      value="{{ student['student_id'] }}"
+    />
 
-  <label for="name">Name</label>
-  <input
-    id="name"
-    name="name"
-    type="text"
-    value="{{ student['name'] }}"
-    autocomplete="off"
-  />
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        class="form-control"
+        id="name"
+        name="name"
+        type="text"
+        value="{{ student['name'] }}"
+        autocomplete="off"
+      />
+    </div>
 
-  <label for="email">Email</label>
-  <input
-    id="email"
-    name="email"
-    type="text"
-    value="{{ student['email'] }}"
-    autocomplete="off"
-  />
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+        value="{{ student['email'] }}"
+        autocomplete="off"
+      />
+    </div>
 
-  <label for="phone">Phone</label>
-  <input
-    id="phone"
-    name="phone"
-    type="text"
-    value="{{ student['phone'] }}"
-    autocomplete="off"
-  />
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input
+        class="form-control"
+        id="phone"
+        name="phone"
+        type="text"
+        value="{{ student['phone'] }}"
+        autocomplete="off"
+      />
+    </div>
 
-  <!-- <label for="location">Location</label>
-  <select name="location" id="location">
-    {% for location in locations %}
-    <option value="{{ location }}">{{ location }}</option>
-    {% endfor %}
-  </select>
-
-  <label for="class-type">Class Type</label>
-  <select name="class_type" id="class-type">
-    {% for type in class_types %}
-    <option value="{{ type }}">{{ type }}</option>
-    {% endfor %}
-  </select> -->
-
-  <input type="submit" value="Confirm" />
-</form>
+    <input type="submit" value="Confirm" />
+  </form>
+</div>
 
 {{ msg }} {% endblock %}

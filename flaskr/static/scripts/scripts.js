@@ -50,12 +50,12 @@ function search() {
 
         // Update form actions dynamically
         const selectForm = tableRow.querySelector('.select-form');
-        selectForm.action = `{{ url_for('actions.select_archived_class') }}`;
+        selectForm.action = `/actions/select_archived_class`;
         selectForm.querySelector('input[name="class_id"]').value =
           archivedClass.class_id;
 
         const unarchiveForm = tableRow.querySelector('.unarchive-form');
-        unarchiveForm.action = `{{ url_for('actions.unarchive') }}`;
+        unarchiveForm.action = `/unarchive`;
         unarchiveForm.querySelector('input[name="class_id"]').value =
           archivedClass.class_id;
 

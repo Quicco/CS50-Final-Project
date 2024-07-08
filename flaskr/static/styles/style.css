@@ -227,7 +227,8 @@ footer {
   gap: 0.5rem;
 }
 
-.empty-class {
+.empty-class,
+.success-picture {
   max-height: 350px;
   max-width: 500px;
 }
@@ -343,4 +344,38 @@ input[type='checkbox'] {
 .search-input:focus {
   outline: none;
   border: 1px solid #000;
+}
+
+/* Add/Edit Page styling */
+
+.page-title {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.form-wrapper {
+  border: 1px solid var(--border-clr);
+  border-radius: 4px;
+  background-color: #fff;
+  margin: 2rem auto;
+  padding: 1rem;
+  max-width: 50%;
+}
+
+/* Confirmation Message styling */
+
+.feedback-wrapper {
+  border-radius: 4px;
+  margin: 2rem auto;
+  padding: 1rem;
+  max-width: 50%;
+  text-align: center;
+}
+
+.success {
+  color: var(--main-clr);
+}
+
+.feedback-msg {
+  margin-bottom: 2rem;
 }
