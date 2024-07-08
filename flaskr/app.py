@@ -340,19 +340,29 @@ def delete_class():
         try:
             con, cur = connect_to_db()
 
-            cur.execute("DELETE FROM class WHERE class_id = (?);", (class_id,))
+            # Get student_ids associated with the class
+            cur.execute(
+                "SELECT student_id FROM class_student WHERE class_id = (?)", (class_id,)
+            )
+            student_ids = [row[0] for row in cur.fetchall()]
+
+            # Delete students from the student table
+            for student_id in student_ids:
+                cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
+
             # Delete all students associated with the class being deleted
             cur.execute("DELETE FROM class_student WHERE class_id = (?);", (class_id,))
+            cur.execute("DELETE FROM class WHERE class_id = (?);", (class_id,))
             con.commit()
 
             page = request.args.get("page", 1, type=int)
-            classes, items_per_page, total_pages = fetch_classes(page)
+            classes, classes_per_page, total_pages = fetch_classes(page)
             return render_template(
                 "homepage/homepage.html",
                 classes=classes,
                 loggedin=True,
                 page=page,
-                items_per_page=items_per_page,
+                classes_per_page=classes_per_page,
                 total_pages=total_pages,
             )
         finally:
@@ -376,8 +386,7 @@ def import_data():
 
             csv_file = request.files.get("import")
             if not csv_file or not csv_file.filename.endswith(".csv"):
-                return "no csv file"
-
+                return redirect(url_for("list", class_id=class_id))
             with csv_file.stream as f:
                 reader = csv.reader(TextIOWrapper(f, encoding="utf-8"), delimiter=",")
                 next(reader, None)
@@ -704,13 +713,19 @@ def confirm_edit():
 def add_student():
     if request.method == "POST":
 
+        con, cur = connect_to_db()
+
         class_id = request.form.get("class_id")
+        class_data = cur.execute(
+            "SELECT location, class_type, course FROM class WHERE class_id = (?)",
+            (class_id),
+        ).fetchone()
 
         return render_template(
             "student/add-student.html",
             class_id=class_id,
-            class_types=CLASS_TYPES,
-            locations=LOCATIONS,
+            class_type=class_data[1],
+            location=class_data[0],
         )
 
 
@@ -791,6 +806,11 @@ def delete_student():
         if student_id:
             try:
                 con, cur = connect_to_db()
+
+                cur.execute(
+                    "DELETE FROM class_student WHERE student_id = (?) AND class_id = (?)",
+                    (student_id, class_id),
+                )
 
                 cur.execute("DELETE FROM student WHERE student_id = (?)", (student_id,))
                 con.commit()

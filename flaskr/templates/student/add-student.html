@@ -16,15 +16,11 @@
 
   <label for="location">Location</label>
   <select name="location" id="location">
-    {% for location in locations %}
     <option value="{{ location }}">{{ location }}</option>
-    {% endfor %}
   </select>
   <label for="class-type">Class Type</label>
   <select name="class_type" id="class-type">
-    {% for type in class_types %}
-    <option value="{{ type }}">{{ type }}</option>
-    {% endfor %}
+    <option value="{{ class_type }}">{{ class_type }}</option>
   </select>
 
   <input type="submit" value="Submit" />
