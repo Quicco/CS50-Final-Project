@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
+from io import TextIOWrapper
 from utils import validate_phone_num, LOCATIONS, CLASS_TYPES, COURSES, TIME_SLOTS
-import sqlite3, datetime, os
+import sqlite3, datetime, os, csv
+
 
 load_dotenv()
 
@@ -144,13 +146,13 @@ def login():
                 if results and ph.verify(results["password"], pw):
 
                     page = request.args.get("page", 1, type=int)
-                    classes, items_per_page, total_pages = fetch_classes(page)
+                    classes, classes_per_page, total_pages = fetch_classes(page)
 
                     welcome_msg = welcome_user()
                     return render_template(
                         "homepage/homepage.html",
                         page=page,
-                        items_per_page=items_per_page,
+                        classes_per_page=classes_per_page,
                         total_pages=total_pages,
                         classes=classes,
                         loggedin=True,
@@ -355,6 +357,56 @@ def delete_class():
             )
         finally:
             con.close()
+
+
+@app.route("/actions/import_data", methods=["GET", "POST"])
+def import_data():
+
+    class_id = request.form.get("class_id")
+
+    if class_id:
+        try:
+            con, cur = connect_to_db()
+
+            # Data from the class itself - Location, course, class_type
+            class_data = cur.execute(
+                "SELECT location, class_type, course FROM class WHERE class_id = (?)",
+                (class_id),
+            ).fetchone()
+
+            csv_file = request.files.get("import")
+            if not csv_file or not csv_file.filename.endswith(".csv"):
+                return "no csv file"
+
+            with csv_file.stream as f:
+                reader = csv.reader(TextIOWrapper(f, encoding="utf-8"), delimiter=",")
+                next(reader, None)
+
+                for row in reader:
+                    cur.execute(
+                        "INSERT OR IGNORE INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ?, ?, ?)",
+                        (
+                            row[0],
+                            row[1],
+                            row[2],
+                            class_data["location"],
+                            class_data["course"],
+                            class_data["class_type"],
+                        ),
+                    )
+                    student_id = cur.lastrowid
+                    cur.execute(
+                        "INSERT INTO class_student (student_id, class_id) VALUES (?, ?)",
+                        (student_id, class_id),
+                    )
+
+                con.commit()
+
+                return redirect(url_for("list", class_id=class_id))
+
+        finally:
+            con.close()
+    return "Didn't work"
 
 
 @app.route("/advance", methods=["GET", "POST"])

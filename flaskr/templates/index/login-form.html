@@ -1,11 +1,5 @@
-{% extends "layout.html" %}
-
-{% block header %}
-  {{ super() }}
-{% endblock %}
-
-{% block body %}
-
+{% extends "layout.html" %} {% block header %} {{ super() }} {% endblock %} {%
+block body %}
 
 <main class="login-main">
   <div class="form-container">
@@ -13,26 +7,26 @@
     <div class="form-content">
       <form action="/login" method="post">
         <div class="inputs">
-        <input
-          class="login-input"
-          type="text"
-          autofocus
-          autocomplete="off"
-          name="email"
-          placeholder="Email"
-          required
-        />
-        <input
-          class="login-input"
-          type="password"
-          autofocus
-          autocomplete="off"
-          name="password"
-          placeholder="Password"
-          required
-        />
-      </div>
-        <p class="error-message ">{{ error }}</p>
+          <input
+            class="login-input"
+            type="text"
+            autofocus
+            autocomplete="off"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <input
+            class="login-input"
+            type="password"
+            autofocus
+            autocomplete="off"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <p class="error-message">{{ error }}</p>
         <input id="login-btn" type="submit" value="Login" />
       </form>
     </div>

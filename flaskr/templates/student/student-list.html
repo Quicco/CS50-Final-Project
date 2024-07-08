@@ -46,7 +46,7 @@
         <form action="/add_student" method="post">
           <input name="class_id" type="hidden" value="{{ class_id }}" />
           <input name="page" type="hidden" value="{{ page }}" />
-          <button class="add-btn">Add</button>
+          <button class="add-btn" title="Add a student">Add</button>
         </form>
         {% endif %}
         <form action="/advance" method="post">
@@ -118,6 +118,7 @@
               <span title="Delete student" class="material-symbols-outlined">
                 <input
                   aria-label="Delete student"
+                  s
                   id="delete-btn"
                   type="submit"
                   value="Delete"
@@ -126,15 +127,32 @@
             </form>
           </td>
         </tr>
-        {% endfor %} {% else %}
-        <h5>There are currently no students in this class.</h5>
-        <form action="/add_student" method="post">
-          <input name="class_id" type="hidden" value="{{ class_id }}" />
-          <input name="page" type="hidden" value="{{ page }}" />
-          <button class="add-btn">Add</button>
-        </form>
+
+        {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <!--When the class has no students-->
+    <h5>There are currently no students in this class.</h5>
+
+    <div class="add-students">
+      <form action="/add_student" method="post">
+        <input name="class_id" type="hidden" value="{{ class_id }}" />
+        <input name="page" type="hidden" value="{{ page }}" />
+        <button class="add-btn">Add</button>
+      </form>
+
+      <form
+        action="/actions/import_data"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="class_id" value="{{ class_id }}" />
+        <label for="import">Import data from a file:</label>
+        <input type="file" name="import" id="import" accept=".csv" />
+        <input type="submit" value="Import" />
+      </form>
+    </div>
     {% endif %}
   </div>
 </main>
