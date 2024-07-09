@@ -233,7 +233,13 @@ footer {
   max-width: 500px;
 }
 
+.add-class-container {
+  align-self: center;
+  margin: 1rem;
+}
+
 /* --- Students List Page --- */
+
 /* Table styling */
 table {
   margin-top: 1rem;
@@ -271,18 +277,11 @@ tr {
   padding: 0.25rem 0.5rem;
 }
 
-.back-btn {
-  position: absolute;
-  top: 9.7%; /* Disgusting */
-  left: 22%;
-  margin: 2rem;
-}
-
 .add-btn {
   border: none;
   background-color: var(--main-clr);
   color: #fff;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 4px;
 }
 .add-btn:hover {
@@ -349,7 +348,7 @@ input[type='checkbox'] {
 /* Add/Edit Page styling */
 
 .page-title {
-  margin-top: 4rem;
+  margin: 2rem;
   text-align: center;
 }
 

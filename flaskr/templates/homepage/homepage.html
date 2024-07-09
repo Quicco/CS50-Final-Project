@@ -46,7 +46,7 @@
         >
         {% endif %} {% if classes|length < 50 %}
         <form action="/actions/add_class" method="post">
-          <button class="add-btn" title="Add a class">Add</button>
+          <button class="add-btn" title="Add a class">Add class</button>
         </form>
         {% endif %}
       </div>
@@ -141,12 +141,16 @@
 
   {% else %}
   <p>No ongoing classes at the moment.</p>
+  <div class="add-class-container">
+    <form action="/actions/add_class" method="post">
+      <button class="add-btn" title="Add a class">Add class</button>
+    </form>
+  </div>
   <img
     class="container-fluid empty-class"
     src="{{ url_for('static', filename='img/empty-class.jpg') }}"
     alt="Picture depicting an empty classroom."
   />
-
   {% endif %}
 </main>
 
