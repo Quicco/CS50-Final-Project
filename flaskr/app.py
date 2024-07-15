@@ -91,6 +91,16 @@ def fetch_students(class_id, page):
         con.close()
 
 
+def fetch_class_type(class_id):
+    con, cur = connect_to_db()
+    row = cur.execute(
+        "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
+    ).fetchone()
+
+    class_type = row["class_type"]
+    return class_type
+
+
 def pagination(items, page):
     # Pagination
     per_page = 8
@@ -185,13 +195,7 @@ def select_ongoing_class():
         if not class_id:
             return render_template("/archived_classes/archived_classes.html")
 
-        con, cur = connect_to_db()
-        row = cur.execute(
-            "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
-        ).fetchone()
-
-        class_type = row["class_type"]
-
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
@@ -397,7 +401,7 @@ def import_data():
             if not csv_file or not csv_file.filename.endswith(".csv"):
                 return redirect(url_for("list", class_id=class_id))
             with csv_file.stream as f:
-                reader = csv.reader(TextIOWrapper(f, encoding="utf-8"), delimiter=",")
+                reader = csv.reader(TextIOWrapper(f, encoding="latin-1"), delimiter=",")
                 next(reader, None)
 
                 for row in reader:
@@ -542,12 +546,14 @@ def list():
 
     con, cur = connect_to_db()
     try:
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
         return render_template(
             "student/student-list.html",
             students=students,
             class_id=class_id,
+            class_type=class_type,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
@@ -828,6 +834,7 @@ def delete_student():
             finally:
                 con.close()
 
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
@@ -835,6 +842,7 @@ def delete_student():
             "student/student-list.html",
             students=students,
             class_id=class_id,
+            class_type=class_type,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
