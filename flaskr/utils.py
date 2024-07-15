@@ -19,15 +19,16 @@ def validate_phone_num(contact_info):
         phone_number = phonenumbers.parse(contact_info, REGION)
 
         if not phonenumbers.is_possible_number(phone_number):
-            return False
+            return None
 
         if not phonenumbers.is_valid_number(phone_number):
-            return False
+            return None
 
         formatted_number = phonenumbers.format_number(
             phone_number, phonenumbers.PhoneNumberFormat.NATIONAL
         )
 
+        print("FORMATTED NUMBER HERE ------->", formatted_number)
         return formatted_number
-    except NumberParseException as e:
-        return False
+    except NumberParseException:
+        return None

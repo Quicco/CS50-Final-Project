@@ -96,7 +96,7 @@ def populate_db():
         )
     con.commit()
 
-    # Create a list with 24 ones and 24 twos
+    # Create a list with 24 ones and 24 twos adn 24 threes
     class_ids = [1] * 24 + [2] * 24 + [3] * 24
     # Shuffle the list to randomize the order
     random.shuffle(class_ids)
@@ -111,19 +111,22 @@ def populate_db():
             "class_type": "PowerUp",
         }
 
-        values = tuple(student.values())
-        cur.execute(
-            "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
-            values,
-        )
+        print("ADDING PHONE NUMBER HERE --------> ", student["phone"])
 
-        student_id = cur.lastrowid
+        if student["phone"]:
+            values = tuple(student.values())
+            cur.execute(
+                "INSERT INTO student (name, email, phone, location, course, class_type) VALUES (?, ?, ?, ? , ?, ?)",
+                values,
+            )
 
-        # Insert into class_student junction table
-        cur.execute(
-            "INSERT INTO class_student (class_id, student_id) VALUES (?, ?)",
-            (class_id, student_id),
-        )
+            student_id = cur.lastrowid
+
+            # Insert into class_student junction table
+            cur.execute(
+                "INSERT INTO class_student (class_id, student_id) VALUES (?, ?)",
+                (class_id, student_id),
+            )
 
     con.commit()
 
