@@ -185,6 +185,13 @@ def select_ongoing_class():
         if not class_id:
             return render_template("/archived_classes/archived_classes.html")
 
+        con, cur = connect_to_db()
+        row = cur.execute(
+            "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
+        ).fetchone()
+
+        class_type = row["class_type"]
+
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
@@ -192,6 +199,7 @@ def select_ongoing_class():
             "student/student-list.html",
             students=students,
             class_id=class_id,
+            class_type=class_type,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,

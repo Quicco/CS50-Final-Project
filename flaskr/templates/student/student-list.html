@@ -48,7 +48,7 @@
           <input name="page" type="hidden" value="{{ page }}" />
           <button class="add-btn" title="Add a student">Add student</button>
         </form>
-        {% endif %}
+        {% endif %} {% if class_type != 'Advanced' %}
         <form action="/advance" method="post">
           <input name="class_id" type="hidden" value="{{ class_id }}" />
           <input
@@ -58,6 +58,7 @@
             value="Advance to Next Stage"
           />
         </form>
+        {% endif %}
       </div>
     </div>
 
