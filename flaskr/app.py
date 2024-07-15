@@ -91,6 +91,16 @@ def fetch_students(class_id, page):
         con.close()
 
 
+def fetch_class_type(class_id):
+    con, cur = connect_to_db()
+    row = cur.execute(
+        "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
+    ).fetchone()
+
+    class_type = row["class_type"]
+    return class_type
+
+
 def pagination(items, page):
     # Pagination
     per_page = 8
@@ -170,13 +180,7 @@ def select_ongoing_class():
         if not class_id:
             return render_template("/archived_classes/archived_classes.html")
 
-        con, cur = connect_to_db()
-        row = cur.execute(
-            "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
-        ).fetchone()
-
-        class_type = row["class_type"]
-
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
@@ -528,6 +532,7 @@ def list():
 
     class_type = row["class_type"]
     try:
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
         return render_template(
@@ -815,6 +820,7 @@ def delete_student():
             finally:
                 con.close()
 
+        class_type = fetch_class_type(class_id)
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
 
@@ -822,6 +828,7 @@ def delete_student():
             "student/student-list.html",
             students=students,
             class_id=class_id,
+            class_type=class_type,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
