@@ -28,7 +28,6 @@ def validate_phone_num(contact_info):
             phone_number, phonenumbers.PhoneNumberFormat.NATIONAL
         )
 
-        print("FORMATTED NUMBER HERE ------->", formatted_number)
         return formatted_number
     except NumberParseException:
         return None

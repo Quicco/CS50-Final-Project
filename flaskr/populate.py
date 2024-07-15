@@ -111,8 +111,6 @@ def populate_db():
             "class_type": "PowerUp",
         }
 
-        print("ADDING PHONE NUMBER HERE --------> ", student["phone"])
-
         if student["phone"]:
             values = tuple(student.values())
             cur.execute(
