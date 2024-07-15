@@ -55,7 +55,7 @@ function search() {
           archivedClass.class_id;
 
         const unarchiveForm = tableRow.querySelector('.unarchive-form');
-        unarchiveForm.action = `/unarchive`;
+        unarchiveForm.action = `/actions/unarchive`;
         unarchiveForm.querySelector('input[name="class_id"]').value =
           archivedClass.class_id;
 

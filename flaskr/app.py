@@ -102,19 +102,6 @@ def pagination(items, page):
     return items_per_page, total_pages
 
 
-def welcome_user():
-    try:
-        email = session["email"]
-        con, cur = connect_to_db()
-        user = cur.execute(
-            "SELECT name FROM teacher WHERE email = (?);", (email,)
-        ).fetchone()
-
-        return f"Welcome, {user[0]}"
-    finally:
-        con.close()
-
-
 # Route functions
 @app.route("/")
 def index():
@@ -148,7 +135,6 @@ def login():
                     page = request.args.get("page", 1, type=int)
                     classes, classes_per_page, total_pages = fetch_classes(page)
 
-                    welcome_msg = welcome_user()
                     return render_template(
                         "homepage/homepage.html",
                         page=page,
@@ -156,7 +142,6 @@ def login():
                         total_pages=total_pages,
                         classes=classes,
                         loggedin=True,
-                        welcome_msg=welcome_msg,
                     )
             except VerifyMismatchError:
                 error = "Incorrect password"
@@ -297,13 +282,11 @@ def archive_class():
         con.commit()
         page = request.args.get("page", 1, type=int)
         classes, classes_per_page, total_pages = fetch_classes(page)
-        welcome_msg = welcome_user()
 
         return render_template(
             "homepage/homepage.html",
             classes=classes,
             loggedin=True,
-            welcome_msg=welcome_msg,
             page=page,
             classes_per_page=classes_per_page,
             total_pages=total_pages,
@@ -327,13 +310,11 @@ def unarchive_class():
         archived_classes, archived_classes_per_page, total_pages = (
             fetch_archived_classes(page)
         )
-        welcome_msg = welcome_user()
 
         return render_template(
             "archived_classes/archived-classes.html",
             archived_classes=archived_classes,
             loggedin=True,
-            welcome_msg=welcome_msg,
             page=page,
             archived_classes_per_page=archived_classes_per_page,
             total_pages=total_pages,
@@ -397,7 +378,7 @@ def import_data():
             if not csv_file or not csv_file.filename.endswith(".csv"):
                 return redirect(url_for("list", class_id=class_id))
             with csv_file.stream as f:
-                reader = csv.reader(TextIOWrapper(f, encoding="utf-8"), delimiter=",")
+                reader = csv.reader(TextIOWrapper(f, encoding="latin-1"), delimiter=",")
                 next(reader, None)
 
                 for row in reader:
@@ -541,6 +522,11 @@ def list():
         print("ERROR - NO CLASS ID!")
 
     con, cur = connect_to_db()
+    row = cur.execute(
+        "SELECT class_type FROM class WHERE class_id = (?)", (class_id)
+    ).fetchone()
+
+    class_type = row["class_type"]
     try:
         page = request.args.get("page", 1, type=int)
         students, students_per_page, total_pages = fetch_students(class_id, page)
@@ -548,6 +534,7 @@ def list():
             "student/student-list.html",
             students=students,
             class_id=class_id,
+            class_type=class_type,
             students_per_page=students_per_page,
             total_pages=total_pages,
             page=page,
@@ -848,13 +835,11 @@ def homepage():
 
     page = request.args.get("page", 1, type=int)
     classes, classes_per_page, total_pages = fetch_classes(page)
-    welcome_msg = welcome_user()
 
     return render_template(
         "homepage/homepage.html",
         classes=classes,
         loggedin=True,
-        welcome_msg=welcome_msg,
         page=page,
         classes_per_page=classes_per_page,
         total_pages=total_pages,
@@ -885,16 +870,16 @@ def search():
     q = request.args.get("q")
     if q:
         con, cur = connect_to_db()
-        like_pattern = f"%{q}%"
+        query = f"%{q}%"
         rows = cur.execute(
             f"SELECT * FROM class WHERE (class_id LIKE (?) OR class_type LIKE (?) OR course LIKE (?) OR location LIKE (?) OR time_slot LIKE (?) OR year LIKE (?)) AND archived = 1",
             (
-                like_pattern,
-                like_pattern,
-                like_pattern,
-                like_pattern,
-                like_pattern,
-                like_pattern,
+                query,
+                query,
+                query,
+                query,
+                query,
+                query,
             ),
         ).fetchall()
         con.close()
